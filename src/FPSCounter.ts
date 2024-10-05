@@ -13,27 +13,31 @@ export class FPSCounter {
     private currentUpdateTime: number = 0;
     private resetTime: number = 5;
     private currentResetTime: number = 0;
+    private counterBackground: PIXI.Sprite;
 
     public Container(): PIXI.Container {
         return this.container;
     }
 
-    constructor() {
+    constructor(uiAssets: any) {
         this.container = new PIXI.Container()
 
-        let background = new PIXI.Graphics().rect(0, 0, 150, 80).fill(0xff0000)
-        this.container.addChild(background)
+        this.counterBackground = new PIXI.Sprite(uiAssets.fpsBackground)
+        this.container.addChild(this.counterBackground)
 
         this.fpsText = new PIXI.Text({ text: 'FPS: 0' })
         this.container.addChild(this.fpsText)
-        this.fpsText.y = 0;
+        this.fpsText.x = 50;
+        this.fpsText.y = 50;
         
-        this.fpsLowText = new PIXI.Text({ text: 'LOW: 0' })
+        this.fpsLowText = new PIXI.Text({ text: 'LO: 0' })
         this.container.addChild(this.fpsLowText)
-        this.fpsLowText.y = 25;
+        this.fpsLowText.x = 180;
+        this.fpsLowText.y = 50;
 
-        this.fpsHighText = new PIXI.Text({ text: 'HIGH: 0' })
+        this.fpsHighText = new PIXI.Text({ text: 'HI: 0' })
         this.container.addChild(this.fpsHighText)
+        this.fpsHighText.x = 300;
         this.fpsHighText.y = 50;
 
     }
@@ -56,9 +60,9 @@ export class FPSCounter {
             this.currentUpdateTime = 0;
         }
 
-        this.fpsText.text = 'FPS: ' + ticker.FPS.toFixed(2);
-        this.fpsLowText.text = 'LOW: ' + this.fpsLow.toFixed(2);
-        this.fpsHighText.text = 'HIGH: ' + this.fpsHigh.toFixed(2);
+        this.fpsText.text = 'FPS:' + ticker.FPS.toFixed(1);
+        this.fpsLowText.text = 'LO:' + this.fpsLow.toFixed(1);
+        this.fpsHighText.text = 'HI:' + this.fpsHigh.toFixed(1);
 
         if(this.currentResetTime > this.resetTime) {
             this.currentResetTime = 0;

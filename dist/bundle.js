@@ -59529,7 +59529,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FPSCounter = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var FPSCounter = /** @class */ (function () {
-    function FPSCounter() {
+    function FPSCounter(uiAssets) {
         this.fpsHigh = 0;
         this.fpsLow = 100000000;
         this.textUpdateFrequency = 1;
@@ -59537,16 +59537,19 @@ var FPSCounter = /** @class */ (function () {
         this.resetTime = 5;
         this.currentResetTime = 0;
         this.container = new PIXI.Container();
-        var background = new PIXI.Graphics().rect(0, 0, 150, 80).fill(0xff0000);
-        this.container.addChild(background);
+        this.counterBackground = new PIXI.Sprite(uiAssets.fpsBackground);
+        this.container.addChild(this.counterBackground);
         this.fpsText = new PIXI.Text({ text: 'FPS: 0' });
         this.container.addChild(this.fpsText);
-        this.fpsText.y = 0;
-        this.fpsLowText = new PIXI.Text({ text: 'LOW: 0' });
+        this.fpsText.x = 50;
+        this.fpsText.y = 50;
+        this.fpsLowText = new PIXI.Text({ text: 'LO: 0' });
         this.container.addChild(this.fpsLowText);
-        this.fpsLowText.y = 25;
-        this.fpsHighText = new PIXI.Text({ text: 'HIGH: 0' });
+        this.fpsLowText.x = 180;
+        this.fpsLowText.y = 50;
+        this.fpsHighText = new PIXI.Text({ text: 'HI: 0' });
         this.container.addChild(this.fpsHighText);
+        this.fpsHighText.x = 300;
         this.fpsHighText.y = 50;
     }
     FPSCounter.prototype.Container = function () {
@@ -59567,9 +59570,9 @@ var FPSCounter = /** @class */ (function () {
         else {
             this.currentUpdateTime = 0;
         }
-        this.fpsText.text = 'FPS: ' + ticker.FPS.toFixed(2);
-        this.fpsLowText.text = 'LOW: ' + this.fpsLow.toFixed(2);
-        this.fpsHighText.text = 'HIGH: ' + this.fpsHigh.toFixed(2);
+        this.fpsText.text = 'FPS:' + ticker.FPS.toFixed(1);
+        this.fpsLowText.text = 'LO:' + this.fpsLow.toFixed(1);
+        this.fpsHighText.text = 'HI:' + this.fpsHigh.toFixed(1);
         if (this.currentResetTime > this.resetTime) {
             this.currentResetTime = 0;
             this.fpsLow = 100000000;
@@ -59583,7 +59586,7 @@ exports.FPSCounter = FPSCounter;
 
 /***/ }),
 
-/***/ 484:
+/***/ 57484:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -59648,7 +59651,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Game = void 0;
+exports.GameSelection = exports.Game = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var Game = /** @class */ (function () {
     function Game(app) {
@@ -59656,6 +59659,9 @@ var Game = /** @class */ (function () {
         this.gameApp = app;
         this.Init();
     }
+    Game.prototype.SetUIRef = function (ui) {
+        this.ui = ui;
+    };
     Game.prototype.Init = function () {
         this.gameContainer = new PIXI.Container();
         this.gameApp.stage.addChild(this.gameContainer);
@@ -59663,8 +59669,34 @@ var Game = /** @class */ (function () {
         this.OnWindowResize();
     };
     Game.prototype.OnWindowResize = function () {
-        this.gameApp.renderer.resize(window.innerWidth, window.innerHeight);
+        //this.gameApp.renderer.resize(window.innerWidth, window.innerHeight);
+        var referenceWidth = 1920;
+        var referenceHeight = 1080;
+        var scale = 1;
+        if (window.innerWidth > window.innerHeight) { //height governs
+            scale = window.innerHeight / referenceHeight;
+            this.SetLandscape();
+        }
+        else { //width governs
+            scale = window.innerWidth / referenceWidth;
+            this.SetPotrait();
+        }
         this.gameContainer.position.set(window.innerWidth / 2, window.innerHeight / 2);
+        this.gameContainer.scale = scale;
+    };
+    Game.prototype.SetLandscape = function () {
+        if (!this.assetsLoaded)
+            return;
+        this.backgroundSprite.scale = 1.1;
+        this.backgroundSprite.x = 0;
+        this.backgroundSprite.y = 50;
+    };
+    Game.prototype.SetPotrait = function () {
+        if (!this.assetsLoaded)
+            return;
+        this.backgroundSprite.scale = 1.5;
+        this.backgroundSprite.x = 50;
+        this.backgroundSprite.y = -window.innerHeight / 6;
     };
     Game.prototype.LoadGameAssets = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -59682,6 +59714,8 @@ var Game = /** @class */ (function () {
                             x = e.clientX;
                             y = e.clientY;
                         });
+                        this.AssetsLoaded();
+                        this.OnWindowResize(); // do this last to make sure all assets are aligned on startup
                         return [2 /*return*/];
                 }
             });
@@ -59689,68 +59723,36 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.AssetsLoaded = function () {
         this.assetsLoaded = true;
+        this.largeCoverBackgroundSprite = new PIXI.Sprite(this.gameAssets.largeCoverBackground);
+        this.largeCoverBackgroundSprite.anchor.set(0.5);
+        this.largeCoverBackgroundSprite.scale = 3;
+        this.gameContainer.addChild(this.largeCoverBackgroundSprite);
+        this.backgroundSprite = new PIXI.Sprite(this.gameAssets.background);
+        this.backgroundSprite.anchor.set(0.5);
+        this.backgroundSprite.scale = 1.3;
+        this.gameContainer.addChild(this.backgroundSprite);
     };
     Game.prototype.Update = function (deltaTime) {
         if (!this.assetsLoaded)
             return;
     };
+    Game.prototype.MenuButonPressed = function (gameSelection) {
+        //console.log("Game Selected: " + GameSelection[gameSelection]);
+    };
     return Game;
 }());
 exports.Game = Game;
+var GameSelection;
+(function (GameSelection) {
+    GameSelection[GameSelection["ACE_OF_SHADOWS"] = 0] = "ACE_OF_SHADOWS";
+    GameSelection[GameSelection["MAGIC_WORDS"] = 1] = "MAGIC_WORDS";
+    GameSelection[GameSelection["PHOENIX_FLAME"] = 2] = "PHOENIX_FLAME";
+})(GameSelection || (exports.GameSelection = GameSelection = {}));
 
 
 /***/ }),
 
-/***/ 19593:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Helpers = void 0;
-var Helpers = /** @class */ (function () {
-    function Helpers() {
-    }
-    Helpers.ClampNumber = function (numberToClamp, min, max) {
-        if (numberToClamp < min) {
-            numberToClamp = min;
-        }
-        else if (numberToClamp > max) {
-            numberToClamp = max;
-        }
-        return numberToClamp;
-    };
-    Helpers.ColourBlender = function (colour1, colour2, percentage) {
-        // Clamp percentage between 0 and 1
-        var clampedPercentage = Math.max(0, Math.min(1, percentage));
-        // Convert the colors to RGB
-        var rgb1 = Helpers.HexToRGB(colour1);
-        var rgb2 = Helpers.HexToRGB(colour2);
-        // Blend the RGB values based on the percentage
-        var r = Math.round(rgb1.r + clampedPercentage * (rgb2.r - rgb1.r));
-        var g = Math.round(rgb1.g + clampedPercentage * (rgb2.g - rgb1.g));
-        var b = Math.round(rgb1.b + clampedPercentage * (rgb2.b - rgb1.b));
-        // Convert the result back to hex and return it
-        return Helpers.RGBToHex(r, g, b);
-    };
-    Helpers.HexToRGB = function (hex) {
-        var bigint = parseInt(hex.slice(1), 16);
-        var r = (bigint >> 16) & 255;
-        var g = (bigint >> 8) & 255;
-        var b = bigint & 255;
-        return { r: r, g: g, b: b };
-    };
-    Helpers.RGBToHex = function (r, g, b) {
-        return "#".concat(((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1));
-    };
-    return Helpers;
-}());
-exports.Helpers = Helpers;
-
-
-/***/ }),
-
-/***/ 668:
+/***/ 66668:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -59817,33 +59819,69 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UI = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
-var Helpers_1 = __webpack_require__(19593);
 var FPSCounter_1 = __webpack_require__(53215);
+var UI_Menu_1 = __webpack_require__(979);
 var UI = /** @class */ (function () {
     function UI(app) {
         this.assetsLoaded = false;
+        this.referenceWidth = 1920;
+        this.referenceHeight = 1080;
         this.gameApp = app;
         this.Init();
     }
+    UI.prototype.SetGameRef = function (game) {
+        this.game = game;
+    };
     UI.prototype.Init = function () {
         this.uiContainer = new PIXI.Container();
         this.gameApp.stage.addChild(this.uiContainer);
+        this.uiAnchorRight = new PIXI.Container();
+        this.uiContainer.addChild(this.uiAnchorRight);
         this.OnWindowResize();
     };
     UI.prototype.OnWindowResize = function () {
-        var referenceWidth = 1920;
-        var referenceHeight = 1080;
-        var currentWidth = window.innerWidth;
-        var currentHeight = window.innerHeight;
-        var scaleX = currentWidth / referenceWidth;
-        var scaleY = currentHeight / referenceHeight;
-        var scaleFactor = Math.max(scaleX, scaleY);
-        scaleFactor = Helpers_1.Helpers.ClampNumber(scaleFactor, 1, 2.5);
-        this.uiContainer.scale = scaleFactor;
+        // let referenceWidth: number = 1920;
+        // let referenceHeight: number = 1080;
+        // let currentWidth: number = window.innerWidth;
+        // let currentHeight: number = window.innerHeight;
+        // const scaleX = currentWidth / referenceWidth;
+        // const scaleY = currentHeight / referenceHeight;
+        // let scaleFactor = Math.min(scaleX, scaleY);
+        // this.uiAnchorRight.position.set(window.innerWidth-(128*scaleY), window.innerHeight/2)
+        // this.uiAnchorRight.scale = scaleY;
+        var scale = 1;
+        if (window.innerWidth > window.innerHeight) { //height governs
+            scale = window.innerHeight / this.referenceHeight;
+            this.SetLandscape(scale);
+        }
+        else { //width governs
+            scale = window.innerWidth / this.referenceWidth;
+            this.SetPotrait(scale);
+        }
+    };
+    UI.prototype.SetLandscape = function (scale) {
+        if (!this.assetsLoaded)
+            return;
+        var aspectRatio = this.referenceWidth / this.referenceHeight;
+        var currentAspectRatio = window.innerWidth / window.innerHeight;
+        var currentX = 0;
+        if (currentAspectRatio < aspectRatio) {
+            currentX = window.innerWidth - 120;
+        }
+        else {
+            //console.log("Why:" + screen.height * aspectRatio)
+            currentX = window.innerWidth;
+        }
+        this.uiAnchorRight.position.set(currentX, window.innerHeight / 2);
+        this.uiAnchorRight.scale = scale;
+    };
+    UI.prototype.SetPotrait = function (scale) {
+        if (!this.assetsLoaded)
+            return;
     };
     UI.prototype.LoadUIAssets = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, mySprite;
+            var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -59851,15 +59889,12 @@ var UI = /** @class */ (function () {
                         return [4 /*yield*/, PIXI.Assets.loadBundle('ui')];
                     case 1:
                         _a.uiAssets = _b.sent();
-                        mySprite = new PIXI.Sprite(this.uiAssets.button);
-                        mySprite.anchor.set(0.5);
-                        mySprite.x = this.gameApp.screen.width / 2;
-                        mySprite.y = this.gameApp.screen.height / 2;
-                        this.uiContainer.addChild(mySprite);
-                        this.fpsCounter = new FPSCounter_1.FPSCounter();
+                        this.uiMenu = new UI_Menu_1.UI_Menu(this.game, this.uiAnchorRight, this.uiAssets);
+                        this.fpsCounter = new FPSCounter_1.FPSCounter(this.uiAssets);
                         this.uiContainer.addChild(this.fpsCounter.Container());
                         this.fpsCounter.Container().position.set(0, 0);
                         this.AssetsLoaded();
+                        this.OnWindowResize(); // do this last to make sure all assets are aligned on startup
                         return [2 /*return*/];
                 }
             });
@@ -59867,15 +59902,195 @@ var UI = /** @class */ (function () {
     };
     UI.prototype.AssetsLoaded = function () {
         this.assetsLoaded = true;
+        //let button: UI_TextButton = new UI_TextButton(this.gameApp, this.uiContainer, this.uiAssets);
     };
     UI.prototype.Update = function (deltaTime) {
         if (!this.assetsLoaded)
             return;
         this.fpsCounter.SetFPS(this.gameApp.ticker);
+        this.uiMenu.Update(deltaTime);
     };
     return UI;
 }());
 exports.UI = UI;
+
+
+/***/ }),
+
+/***/ 979:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UI_Menu = void 0;
+var PIXI = __importStar(__webpack_require__(95894));
+var UI_TextButton_1 = __webpack_require__(591);
+var Game_1 = __webpack_require__(57484);
+var UI_Menu = /** @class */ (function () {
+    function UI_Menu(game, parent, uiAssets) {
+        // button specifics
+        this.textButtons = [];
+        this.buttonNames = ['Ace of Shadows', 'Magic Words', 'Phoenix Flame'];
+        this.gameSelections = [Game_1.GameSelection.ACE_OF_SHADOWS, Game_1.GameSelection.MAGIC_WORDS, Game_1.GameSelection.PHOENIX_FLAME];
+        this.game = game;
+        this.uiAssets = uiAssets;
+        this.parent = parent;
+        this.container = new PIXI.Container();
+        this.container.pivot = 0.5;
+        this.Init();
+    }
+    UI_Menu.prototype.Init = function () {
+        this.parent.addChild(this.container);
+        var menuBackgroundSprite = new PIXI.Sprite(this.uiAssets.menuBackground);
+        menuBackgroundSprite.anchor.set(0.5);
+        menuBackgroundSprite.x = 0;
+        menuBackgroundSprite.y = 0;
+        menuBackgroundSprite.width = 512;
+        menuBackgroundSprite.height = 916;
+        this.container.addChild(menuBackgroundSprite);
+        for (var i = 0; i < 3; i++) {
+            this.textButtons[i] = new UI_TextButton_1.UI_TextButton(this.game, this.container, this.uiAssets);
+            this.textButtons[i].Container().position.y = -200 + (i * 200);
+            this.textButtons[i].SetButtonText(this.buttonNames[i]);
+            this.textButtons[i].SetButtonGameSelection(this.gameSelections[i]);
+        }
+    };
+    UI_Menu.prototype.Container = function () {
+        return this.container;
+    };
+    UI_Menu.prototype.Update = function (deltaTime) {
+        for (var i = 0; i < this.textButtons.length; i++) {
+            this.textButtons[i].Update(deltaTime);
+        }
+    };
+    return UI_Menu;
+}());
+exports.UI_Menu = UI_Menu;
+
+
+/***/ }),
+
+/***/ 591:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UI_TextButton = void 0;
+var PIXI = __importStar(__webpack_require__(95894));
+var UI_TextButton = /** @class */ (function () {
+    function UI_TextButton(game, parent, uiAssets) {
+        this.buttonDown = false;
+        // button click anim
+        this.butonClickDownLength = 0.25; // how long to show the button depressed
+        this.butonClickDownTimer = 0;
+        this.game = game;
+        this.uiAssets = uiAssets;
+        this.parent = parent;
+        this.container = new PIXI.Container();
+        this.container.pivot = 0.5;
+        this.Init();
+    }
+    UI_TextButton.prototype.Init = function () {
+        var _this = this;
+        this.parent.addChild(this.container);
+        this.buttonSprite = new PIXI.Sprite(this.uiAssets.button);
+        this.buttonSprite.anchor = 0.5;
+        this.buttonSprite.height = 160;
+        this.buttonSprite.eventMode = 'static';
+        this.buttonSprite.cursor = 'pointer';
+        this.buttonSprite.on('pointerdown', function () { _this.ButtonClicked(); });
+        this.container.addChild(this.buttonSprite);
+        this.buttonText = new PIXI.Text({ text: 'BUTTON' });
+        this.buttonText.x = 0;
+        this.buttonText.y = 0;
+        this.buttonText.anchor = 0.5;
+        this.container.addChild(this.buttonText);
+    };
+    UI_TextButton.prototype.Container = function () {
+        return this.container;
+    };
+    UI_TextButton.prototype.SetButtonText = function (text) {
+        this.buttonText.text = text;
+    };
+    UI_TextButton.prototype.SetButtonGameSelection = function (gameSelection) {
+        this.gameSelection = gameSelection;
+    };
+    UI_TextButton.prototype.ButtonClicked = function () {
+        if (this.buttonDown)
+            return;
+        this.game.MenuButonPressed(this.gameSelection);
+        this.PressButtonDown();
+    };
+    UI_TextButton.prototype.Update = function (deltaTime) {
+        if (this.buttonDown) {
+            this.butonClickDownTimer += deltaTime;
+            if (this.butonClickDownTimer >= this.butonClickDownLength) {
+                this.ReleaseButtonDown();
+                this.butonClickDownTimer = 0;
+            }
+        }
+    };
+    UI_TextButton.prototype.PressButtonDown = function () {
+        this.buttonDown = true;
+        this.container.x += 10;
+        this.container.y -= 10;
+    };
+    UI_TextButton.prototype.ReleaseButtonDown = function () {
+        this.buttonDown = false;
+        this.container.x -= 10;
+        this.container.y += 10;
+    };
+    return UI_TextButton;
+}());
+exports.UI_TextButton = UI_TextButton;
 
 
 /***/ }),
@@ -59946,8 +60161,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var PIXI = __importStar(__webpack_require__(95894));
-var Game_1 = __webpack_require__(484);
-var UI_1 = __webpack_require__(668);
+var Game_1 = __webpack_require__(57484);
+var UI_1 = __webpack_require__(66668);
 var app = new PIXI.Application();
 var Startup = /** @class */ (function () {
     function Startup() {
@@ -59973,11 +60188,14 @@ var Startup = /** @class */ (function () {
                         game.LoadGameAssets();
                         ui = new UI_1.UI(app);
                         ui.LoadUIAssets();
+                        game.SetUIRef(ui);
+                        ui.SetGameRef(game);
                         app.ticker.add(function (_delta) {
                             game.Update(_delta.elapsedMS / 1000);
                             ui.Update(_delta.elapsedMS / 1000);
                         });
                         window.addEventListener('resize', function () {
+                            app.renderer.resize(window.innerWidth, window.innerHeight);
                             game.OnWindowResize();
                             ui.OnWindowResize();
                         });

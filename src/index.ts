@@ -26,14 +26,18 @@ class Startup {
         const ui: UI = new UI(app);
         ui.LoadUIAssets();
 
+        game.SetUIRef(ui);
+        ui.SetGameRef(game);
+
         app.ticker.add((_delta) => {
             game.Update(_delta.elapsedMS/1000)
             ui.Update(_delta.elapsedMS/1000)
         })
 
         window.addEventListener('resize', () => {
+            app.renderer.resize(window.innerWidth, window.innerHeight);
             game.OnWindowResize();
-            ui.OnWindowResize();
+            ui.OnWindowResize();            
         });
     }
 }

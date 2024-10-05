@@ -4,8 +4,8 @@
           "name":"game",
           "assets":[
             {
-            "alias":"testSprite",
-            "src":"images/vader.jpeg"
+            "alias":"background",
+            "src":"images/background.png"
             }
           ]
        },
@@ -15,7 +15,19 @@
              {
                 "alias":"button",
                 "src":"images/button.png"
-             }
+             },
+             {
+               "alias":"menuBackground",
+               "src":"images/menuBackground.png"
+            },
+            {
+              "alias":"fpsBackground",
+              "src":"images/fpsBackground.png"
+           },
+           {
+              "alias":"largeCoverBackground",
+              "src":"images/largeCoverBackground.png"            
+           }
           ]
        }
     ]
