@@ -1,0 +1,22 @@
+{
+    "bundles":[
+       {
+          "name":"game",
+          "assets":[
+            {
+            "alias":"testSprite",
+            "src":"images/vader.jpeg"
+            }
+          ]
+       },
+       {
+          "name":"ui",
+          "assets":[
+             {
+                "alias":"button",
+                "src":"images/button.png"
+             }
+          ]
+       }
+    ]
+ }
