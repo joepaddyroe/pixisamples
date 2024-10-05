@@ -59840,15 +59840,6 @@ var UI = /** @class */ (function () {
         this.OnWindowResize();
     };
     UI.prototype.OnWindowResize = function () {
-        // let referenceWidth: number = 1920;
-        // let referenceHeight: number = 1080;
-        // let currentWidth: number = window.innerWidth;
-        // let currentHeight: number = window.innerHeight;
-        // const scaleX = currentWidth / referenceWidth;
-        // const scaleY = currentHeight / referenceHeight;
-        // let scaleFactor = Math.min(scaleX, scaleY);
-        // this.uiAnchorRight.position.set(window.innerWidth-(128*scaleY), window.innerHeight/2)
-        // this.uiAnchorRight.scale = scaleY;
         var scale = 1;
         if (window.innerWidth > window.innerHeight) { //height governs
             scale = window.innerHeight / this.referenceHeight;
@@ -59866,18 +59857,23 @@ var UI = /** @class */ (function () {
         var currentAspectRatio = window.innerWidth / window.innerHeight;
         var currentX = 0;
         if (currentAspectRatio < aspectRatio) {
-            currentX = window.innerWidth - 120;
+            currentX = window.innerWidth - 80;
         }
         else {
-            //console.log("Why:" + screen.height * aspectRatio)
-            currentX = window.innerWidth;
+            console.log("Why:" + screen.height * aspectRatio);
+            currentX = (window.innerWidth / 2) + (883 * scale);
         }
         this.uiAnchorRight.position.set(currentX, window.innerHeight / 2);
         this.uiAnchorRight.scale = scale;
+        this.uiMenu.SetOrientationLandscape();
     };
     UI.prototype.SetPotrait = function (scale) {
         if (!this.assetsLoaded)
             return;
+        var currentX = window.innerWidth / 2;
+        this.uiAnchorRight.position.set(currentX, window.innerHeight - 100);
+        this.uiAnchorRight.scale = scale;
+        this.uiMenu.SetOrientationPortrait();
     };
     UI.prototype.LoadUIAssets = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -59965,19 +59961,46 @@ var UI_Menu = /** @class */ (function () {
     }
     UI_Menu.prototype.Init = function () {
         this.parent.addChild(this.container);
-        var menuBackgroundSprite = new PIXI.Sprite(this.uiAssets.menuBackground);
-        menuBackgroundSprite.anchor.set(0.5);
-        menuBackgroundSprite.x = 0;
-        menuBackgroundSprite.y = 0;
-        menuBackgroundSprite.width = 512;
-        menuBackgroundSprite.height = 916;
-        this.container.addChild(menuBackgroundSprite);
+        this.menuBackgroundSprite = new PIXI.Sprite(this.uiAssets.menuBackground);
+        this.menuBackgroundSprite.anchor.set(0.5);
+        this.menuBackgroundSprite.x = 0;
+        this.menuBackgroundSprite.y = 0;
+        this.menuBackgroundSprite.width = 512;
+        this.menuBackgroundSprite.height = 916;
+        this.container.addChild(this.menuBackgroundSprite);
         for (var i = 0; i < 3; i++) {
             this.textButtons[i] = new UI_TextButton_1.UI_TextButton(this.game, this.container, this.uiAssets);
-            this.textButtons[i].Container().position.y = -200 + (i * 200);
+            this.textButtons[i].Container().position.y = -250 + (i * 200);
             this.textButtons[i].SetButtonText(this.buttonNames[i]);
             this.textButtons[i].SetButtonGameSelection(this.gameSelections[i]);
         }
+    };
+    UI_Menu.prototype.SetOrientationLandscape = function () {
+        this.menuBackgroundSprite.anchor.set(0.5);
+        this.menuBackgroundSprite.x = 0;
+        this.menuBackgroundSprite.y = 0;
+        this.menuBackgroundSprite.width = 512;
+        this.menuBackgroundSprite.height = 916;
+        this.menuBackgroundSprite.angle = 0;
+        for (var i = 0; i < 3; i++) {
+            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.y = -250 + (i * 200);
+        }
+        this.container.scale = 1;
+    };
+    UI_Menu.prototype.SetOrientationPortrait = function () {
+        this.menuBackgroundSprite.anchor.set(0.5);
+        this.menuBackgroundSprite.x = 0;
+        this.menuBackgroundSprite.y = 0;
+        this.menuBackgroundSprite.width = 1000;
+        this.menuBackgroundSprite.height = 2100;
+        this.menuBackgroundSprite.angle = 90;
+        for (var i = 0; i < 3; i++) {
+            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.y = -300 + (i * 150);
+            ;
+        }
+        this.container.scale = 1.5;
     };
     UI_Menu.prototype.Container = function () {
         return this.container;
@@ -60049,9 +60072,10 @@ var UI_TextButton = /** @class */ (function () {
         this.buttonSprite.on('pointerdown', function () { _this.ButtonClicked(); });
         this.container.addChild(this.buttonSprite);
         this.buttonText = new PIXI.Text({ text: 'BUTTON' });
-        this.buttonText.x = 0;
+        this.buttonText.x = -50;
         this.buttonText.y = 0;
         this.buttonText.anchor = 0.5;
+        this.buttonText.style.fontSize = 30;
         this.container.addChild(this.buttonText);
     };
     UI_TextButton.prototype.Container = function () {

@@ -14,7 +14,7 @@ export class UI_Menu {
     private textButtons: UI_TextButton[] = [];
     private buttonNames: string[] = ['Ace of Shadows','Magic Words','Phoenix Flame'];
     private gameSelections: GameSelection[] = [GameSelection.ACE_OF_SHADOWS, GameSelection.MAGIC_WORDS, GameSelection.PHOENIX_FLAME];
-      
+    private menuBackgroundSprite!: PIXI.Sprite;
 
     constructor(game: Game, parent: PIXI.Container, uiAssets: any) {
         this.game = game;   
@@ -28,22 +28,54 @@ export class UI_Menu {
     private Init(): void {        
         this.parent.addChild(this.container);
 
-        const menuBackgroundSprite = new PIXI.Sprite(this.uiAssets.menuBackground)
+        this.menuBackgroundSprite = new PIXI.Sprite(this.uiAssets.menuBackground)
 
-        menuBackgroundSprite.anchor.set(0.5);
-        menuBackgroundSprite.x = 0;
-        menuBackgroundSprite.y = 0;
-        menuBackgroundSprite.width = 512;
-        menuBackgroundSprite.height = 916;
-        this.container.addChild(menuBackgroundSprite);
+        this.menuBackgroundSprite.anchor.set(0.5);
+        this.menuBackgroundSprite.x = 0;
+        this.menuBackgroundSprite.y = 0;
+        this.menuBackgroundSprite.width = 512;
+        this.menuBackgroundSprite.height = 916;
+        this.container.addChild(this.menuBackgroundSprite);
 
         for(let i: number = 0; i < 3; i++) {
             this.textButtons[i] = new UI_TextButton(this.game, this.container, this.uiAssets);
-            this.textButtons[i].Container().position.y = -200 + (i * 200);
+            this.textButtons[i].Container().position.y = -250 + (i * 200);
             this.textButtons[i].SetButtonText(this.buttonNames[i]);
             this.textButtons[i].SetButtonGameSelection(this.gameSelections[i]);
         }
         
+    }
+
+    public SetOrientationLandscape(): void {
+        this.menuBackgroundSprite.anchor.set(0.5);
+        this.menuBackgroundSprite.x = 0;
+        this.menuBackgroundSprite.y = 0;
+        this.menuBackgroundSprite.width = 512;
+        this.menuBackgroundSprite.height = 916;
+        this.menuBackgroundSprite.angle = 0;
+
+        for(let i: number = 0; i < 3; i++) {
+            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.y = -250 + (i * 200);
+        }
+
+        this.container.scale = 1;
+    }
+
+    public SetOrientationPortrait(): void {
+        this.menuBackgroundSprite.anchor.set(0.5);
+        this.menuBackgroundSprite.x = 0;
+        this.menuBackgroundSprite.y = 0;
+        this.menuBackgroundSprite.width = 1000;
+        this.menuBackgroundSprite.height = 2100;
+        this.menuBackgroundSprite.angle = 90;
+
+        for(let i: number = 0; i < 3; i++) {
+            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.y = -300 + (i * 150);;
+        }
+
+        this.container.scale = 1.5;
     }
 
     public Container(): PIXI.Container {

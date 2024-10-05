@@ -40,22 +40,6 @@ export class UI {
     }
 
     public OnWindowResize(): void {
-        
-        // let referenceWidth: number = 1920;
-        // let referenceHeight: number = 1080;
-
-        // let currentWidth: number = window.innerWidth;
-        // let currentHeight: number = window.innerHeight;
-
-        // const scaleX = currentWidth / referenceWidth;
-        // const scaleY = currentHeight / referenceHeight;
-
-        // let scaleFactor = Math.min(scaleX, scaleY);
-
-        // this.uiAnchorRight.position.set(window.innerWidth-(128*scaleY), window.innerHeight/2)
-        // this.uiAnchorRight.scale = scaleY;
-
-        
 
         let scale = 1;
 
@@ -78,20 +62,27 @@ export class UI {
         let currentX: number = 0;
 
         if(currentAspectRatio < aspectRatio) {
-            currentX = window.innerWidth - 120;
+            currentX = window.innerWidth - 80;
         } else {
-            //console.log("Why:" + screen.height * aspectRatio)
-            currentX = window.innerWidth; 
+            console.log("Why:" + screen.height * aspectRatio);
+            currentX = (window.innerWidth/2) + (883 * scale);
         }
-
+        
         this.uiAnchorRight.position.set(currentX, window.innerHeight/2)
         this.uiAnchorRight.scale = scale;
+
+        this.uiMenu.SetOrientationLandscape();
     }
 
     private SetPotrait(scale: number): void {
         if(!this.assetsLoaded)
             return;
 
+        let currentX = window.innerWidth/2;
+        this.uiAnchorRight.position.set(currentX, window.innerHeight - 100)
+        this.uiAnchorRight.scale = scale;
+
+        this.uiMenu.SetOrientationPortrait();
     }
 
 
