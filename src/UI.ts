@@ -64,7 +64,6 @@ export class UI {
         if(currentAspectRatio < aspectRatio) {
             currentX = window.innerWidth - 80;
         } else {
-            console.log("Why:" + screen.height * aspectRatio);
             currentX = (window.innerWidth/2) + (883 * scale);
         }
         
@@ -103,7 +102,6 @@ export class UI {
     private AssetsLoaded(): void {
         this.assetsLoaded = true;
 
-        //let button: UI_TextButton = new UI_TextButton(this.gameApp, this.uiContainer, this.uiAssets);
         
     }
 

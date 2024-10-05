@@ -59669,7 +59669,6 @@ var Game = /** @class */ (function () {
         this.OnWindowResize();
     };
     Game.prototype.OnWindowResize = function () {
-        //this.gameApp.renderer.resize(window.innerWidth, window.innerHeight);
         var referenceWidth = 1920;
         var referenceHeight = 1080;
         var scale = 1;
@@ -59860,7 +59859,6 @@ var UI = /** @class */ (function () {
             currentX = window.innerWidth - 80;
         }
         else {
-            console.log("Why:" + screen.height * aspectRatio);
             currentX = (window.innerWidth / 2) + (883 * scale);
         }
         this.uiAnchorRight.position.set(currentX, window.innerHeight / 2);
@@ -59898,7 +59896,6 @@ var UI = /** @class */ (function () {
     };
     UI.prototype.AssetsLoaded = function () {
         this.assetsLoaded = true;
-        //let button: UI_TextButton = new UI_TextButton(this.gameApp, this.uiContainer, this.uiAssets);
     };
     UI.prototype.Update = function (deltaTime) {
         if (!this.assetsLoaded)

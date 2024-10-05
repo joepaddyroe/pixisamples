@@ -37,9 +37,7 @@ export class Game {
     }
 
     public OnWindowResize(): void {
-        
-        //this.gameApp.renderer.resize(window.innerWidth, window.innerHeight);
-        
+                
         let referenceWidth: number = 1920;
         let referenceHeight: number = 1080;
 
