@@ -5,6 +5,7 @@ import { FPSCounter } from './FPSCounter';
 import { UI } from './UI';
 import { ParticleSystem } from './Demos/ParticleSystem';
 import { CardsSystem } from './Demos/CardsSystem';
+import { TextAndImageTool } from './Demos/TextAndImageTool';
 
 export class Game {
 
@@ -24,6 +25,7 @@ export class Game {
     private currentGameSelection: GameSelection = GameSelection.NONE;
     private flameParticleSystem!: ParticleSystem | null;
     private cardsSystem!: CardsSystem | null;
+    private imageTextTool!: TextAndImageTool | null;
 
     constructor(app: PIXI.Application) {
         this.gameApp = app;        
@@ -134,6 +136,9 @@ export class Game {
 
         if(this.cardsSystem != null)
             this.cardsSystem.Update(deltaTime);
+
+        if(this.imageTextTool != null)
+            this.imageTextTool.Update(deltaTime);
     }
 
     public MenuButonPressed(gameSelection: GameSelection): void {
@@ -159,7 +164,7 @@ export class Game {
                 this.BuildCardSystem();
                 break;
             case GameSelection.MAGIC_WORDS:
-                
+                this.BuildImageTextTool();
                 break;
             case GameSelection.PHOENIX_FLAME:
                 this.BuildParticleSystem();
@@ -175,7 +180,10 @@ export class Game {
                     this.demoContainer.removeChild(this.cardsSystem.Container());
                 this.cardsSystem = null;
                 break;
-            case GameSelection.MAGIC_WORDS:
+            case GameSelection.MAGIC_WORDS:                
+                if(this.imageTextTool != null)
+                    this.demoContainer.removeChild(this.imageTextTool.Container());
+                this.imageTextTool = null;
                 break;
             case GameSelection.PHOENIX_FLAME:
                 if(this.flameParticleSystem != null)
@@ -197,6 +205,11 @@ export class Game {
     private BuildCardSystem(): void {
         this.cardsSystem = new CardsSystem();
         this.demoContainer.addChild(this.cardsSystem.Container());
+    }
+
+    private BuildImageTextTool(): void {
+        this.imageTextTool = new TextAndImageTool(this.gameAssets);
+        this.demoContainer.addChild(this.imageTextTool.Container());
     }
 
 }

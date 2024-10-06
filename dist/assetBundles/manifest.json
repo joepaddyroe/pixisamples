@@ -4,20 +4,52 @@
           "name":"game",
           "assets":[
             {
-            "alias":"background",
-            "src":"images/background.png"
+               "alias":"background",
+               "src":"images/background.png"
             },
             {
-            "alias":"flame2",
-            "src":"images/flame2.png"
+               "alias":"flame2",
+               "src":"images/flame2.png"
             },
             {
-            "alias":"playing_cards",
-            "src":"images/playing_cards.png"
+               "alias":"playing_cards",
+               "src":"images/playing_cards.png"
             },            
             {
                "alias":"largeCoverBackground",
                "src":"images/largeCoverBackground.png"            
+            },            
+            {
+               "alias":"atwork",
+               "src":"images/places/at work.jpg"            
+            },            
+            {
+               "alias":"bythelake",
+               "src":"images/places/by the lake.jpg"            
+            },            
+            {
+               "alias":"inthecity",
+               "src":"images/places/in the city.jpg"            
+            },            
+            {
+               "alias":"inthepark",
+               "src":"images/places/in the park.jpeg"            
+            },            
+            {
+               "alias":"intheyard",
+               "src":"images/places/in the yard.jpg"            
+            },            
+            {
+               "alias":"onthemountain",
+               "src":"images/places/on the mountain.jpg"            
+            },            
+            {
+               "alias":"ontheroof",
+               "src":"images/places/on the roof.jpg"            
+            },            
+            {
+               "alias":"underthetree",
+               "src":"images/places/under the tree.jpg"            
             }
           ]
        },

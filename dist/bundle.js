@@ -60115,6 +60115,131 @@ exports.FireAtlasData = FireAtlasData;
 
 /***/ }),
 
+/***/ 292:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TextAndImageTool = void 0;
+var PIXI = __importStar(__webpack_require__(95894));
+var Helpers_1 = __webpack_require__(19593);
+var TextAndImageTool = /** @class */ (function () {
+    function TextAndImageTool(gameAssets) {
+        // demo specific
+        this.doRandomSwapTimer = 0;
+        this.randomSwapDuration = 2; // how long it takes to move a card
+        this.alphaFadeIn = 0;
+        // font list
+        this.fontList = ['Arial', 'Comic Sans MS', 'Helvetica', 'Georgia', 'Times New Roman', 'Trebuchet', 'Tahoma', 'Palatino Lino Type', 'Impact'];
+        this.fontStyles = ['normal', 'italic', 'oblique'];
+        this.fontWeights = ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
+        this.container = new PIXI.Container();
+        this.container.pivot = 0.5;
+        this.imageSprite = new PIXI.Sprite();
+        this.gameAssets = gameAssets;
+        this.container.addChild(this.imageSprite);
+        this.DoImageTextSwap();
+    }
+    TextAndImageTool.prototype.Container = function () {
+        return this.container;
+    };
+    TextAndImageTool.prototype.Update = function (deltaTime) {
+        this.doRandomSwapTimer += deltaTime;
+        if (this.doRandomSwapTimer > this.randomSwapDuration) {
+            this.doRandomSwapTimer = 0;
+            this.DoImageTextSwap();
+        }
+        if (this.alphaFadeIn < 1) {
+            this.alphaFadeIn += deltaTime;
+            this.alphaFadeIn = Helpers_1.Helpers.ClampNumber(this.alphaFadeIn, 0, 1);
+        }
+        if (this.richText)
+            this.richText.alpha = this.alphaFadeIn;
+    };
+    TextAndImageTool.prototype.DoImageTextSwap = function () {
+        this.alphaFadeIn = 0;
+        if (this.richText != null)
+            this.container.removeChild(this.richText);
+        var fill = new PIXI.FillGradient(0, 0, 0, 36 * 1.7 * 7);
+        var colors = [this.GetRandomHexColour(), this.GetRandomHexColour()].map(function (color) { return PIXI.Color.shared.setValue(color).toNumber(); });
+        colors.forEach(function (number, index) {
+            var ratio = index / colors.length;
+            fill.addColorStop(ratio, number);
+        });
+        var font = this.fontList[Math.floor((Math.random() * this.fontList.length - 1) + 1)];
+        var fontSize = Math.floor((Math.random() * 50) + 30);
+        var fontStyle = this.fontStyles[Math.floor((Math.random() * this.fontStyles.length - 1) + 1)];
+        var fontWeight = this.fontWeights[Math.floor((Math.random() * this.fontWeights.length - 1) + 1)];
+        var shouldFill = Math.floor((Math.random() * 3) + 1) == 1;
+        var shouldWordWrap = Math.floor((Math.random() * 3) + 1) == 1;
+        var style = new PIXI.TextStyle();
+        style.fontFamily = font;
+        style.fontSize = fontSize;
+        style.fontStyle = fontStyle;
+        style.fontWeight = fontWeight;
+        style.fill = fill;
+        style.wordWrap = shouldWordWrap;
+        style.wordWrapWidth = Math.floor((Math.random() * 400) + 1);
+        this.richText = new PIXI.Text({
+            text: this.GenerateRandomSentence(),
+            style: style,
+        });
+        this.richText.anchor = 0.5;
+        this.container.addChild(this.richText);
+    };
+    TextAndImageTool.prototype.GetRandomHexColour = function () {
+        var randomColor = Math.floor(Math.random() * 0xFFFFFF);
+        return "#".concat(randomColor.toString(16).padStart(6, '0'));
+    };
+    TextAndImageTool.prototype.GenerateRandomSentence = function () {
+        var subjects = ['The cat', 'A dog', 'My friend', 'The teacher', 'An artist', 'A scientist', 'A musician', 'The baker', 'The bird', 'The child'];
+        var verbs = ['runs', 'jumps', 'paints', 'sings', 'teaches', 'eats', 'creates', 'builds', 'draws', 'explores'];
+        var objects = ['in the park', 'on the roof', 'in the yard', 'under the tree', 'in the city', 'at work', 'by the lake', 'on the mountain'];
+        var subject = subjects[Math.floor(Math.random() * subjects.length)];
+        var verb = verbs[Math.floor(Math.random() * verbs.length)];
+        var object = objects[Math.floor(Math.random() * objects.length)];
+        this.SetImageSprite(object);
+        return "".concat(subject, " ").concat(verb, " ").concat(object, ".");
+    };
+    TextAndImageTool.prototype.SetImageSprite = function (objectName) {
+        if (this.imageSprite != null)
+            this.container.removeChild(this.imageSprite);
+        var imageAlias = objectName.replace(/\s/g, '');
+        this.imageSprite = new PIXI.Sprite(PIXI.Assets.get(imageAlias));
+        this.imageSprite.anchor = 0.5;
+        this.container.addChild(this.imageSprite);
+    };
+    return TextAndImageTool;
+}());
+exports.TextAndImageTool = TextAndImageTool;
+
+
+/***/ }),
+
 /***/ 53215:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -60276,6 +60401,7 @@ exports.GameSelection = exports.Game = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var ParticleSystem_1 = __webpack_require__(51032);
 var CardsSystem_1 = __webpack_require__(50181);
+var TextAndImageTool_1 = __webpack_require__(292);
 var Game = /** @class */ (function () {
     function Game(app) {
         this.assetsLoaded = false;
@@ -60372,6 +60498,8 @@ var Game = /** @class */ (function () {
             this.flameParticleSystem.Update(deltaTime);
         if (this.cardsSystem != null)
             this.cardsSystem.Update(deltaTime);
+        if (this.imageTextTool != null)
+            this.imageTextTool.Update(deltaTime);
     };
     Game.prototype.MenuButonPressed = function (gameSelection) {
         if (gameSelection == GameSelection.FULL_SCREEN) {
@@ -60391,6 +60519,7 @@ var Game = /** @class */ (function () {
                 this.BuildCardSystem();
                 break;
             case GameSelection.MAGIC_WORDS:
+                this.BuildImageTextTool();
                 break;
             case GameSelection.PHOENIX_FLAME:
                 this.BuildParticleSystem();
@@ -60405,6 +60534,9 @@ var Game = /** @class */ (function () {
                 this.cardsSystem = null;
                 break;
             case GameSelection.MAGIC_WORDS:
+                if (this.imageTextTool != null)
+                    this.demoContainer.removeChild(this.imageTextTool.Container());
+                this.imageTextTool = null;
                 break;
             case GameSelection.PHOENIX_FLAME:
                 if (this.flameParticleSystem != null)
@@ -60422,6 +60554,10 @@ var Game = /** @class */ (function () {
     Game.prototype.BuildCardSystem = function () {
         this.cardsSystem = new CardsSystem_1.CardsSystem();
         this.demoContainer.addChild(this.cardsSystem.Container());
+    };
+    Game.prototype.BuildImageTextTool = function () {
+        this.imageTextTool = new TextAndImageTool_1.TextAndImageTool(this.gameAssets);
+        this.demoContainer.addChild(this.imageTextTool.Container());
     };
     return Game;
 }());
