@@ -60374,6 +60374,13 @@ var Game = /** @class */ (function () {
             this.cardsSystem.Update(deltaTime);
     };
     Game.prototype.MenuButonPressed = function (gameSelection) {
+        if (gameSelection == GameSelection.FULL_SCREEN) {
+            var elem = document.getElementById("game-canvas");
+            if (elem === null || elem === void 0 ? void 0 : elem.requestFullscreen) {
+                elem === null || elem === void 0 ? void 0 : elem.requestFullscreen();
+            }
+            return;
+        }
         if (this.currentGameSelection == gameSelection)
             return;
         if (this.currentGameSelection != GameSelection.NONE)
@@ -60387,18 +60394,6 @@ var Game = /** @class */ (function () {
                 break;
             case GameSelection.PHOENIX_FLAME:
                 this.BuildParticleSystem();
-                break;
-            case GameSelection.FULL_SCREEN:
-                var elem = document.getElementById("game-canvas");
-                if (elem === null || elem === void 0 ? void 0 : elem.requestFullscreen) {
-                    elem === null || elem === void 0 ? void 0 : elem.requestFullscreen();
-                }
-                // else if (elem?.webkitRequestFullscreen) { /* Safari */
-                //     elem?.webkitRequestFullscreen();
-                // } 
-                // else if (elem?.msRequestFullscreen) { /* IE11 */
-                //     elem?.msRequestFullscreen();
-                // }
                 break;
         }
     };

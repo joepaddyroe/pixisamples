@@ -138,6 +138,14 @@ export class Game {
 
     public MenuButonPressed(gameSelection: GameSelection): void {
                
+        if(gameSelection == GameSelection.FULL_SCREEN) {
+            var elem = document.getElementById("game-canvas");
+                if (elem?.requestFullscreen) {
+                    elem?.requestFullscreen();
+                } 
+            return;
+        }
+
         if(this.currentGameSelection == gameSelection)
             return;
 
@@ -155,18 +163,6 @@ export class Game {
                 break;
             case GameSelection.PHOENIX_FLAME:
                 this.BuildParticleSystem();
-                break;
-            case GameSelection.FULL_SCREEN:
-                var elem = document.getElementById("game-canvas");
-                if (elem?.requestFullscreen) {
-                    elem?.requestFullscreen();
-                } 
-                // else if (elem?.webkitRequestFullscreen) { /* Safari */
-                //     elem?.webkitRequestFullscreen();
-                // } 
-                // else if (elem?.msRequestFullscreen) { /* IE11 */
-                //     elem?.msRequestFullscreen();
-                // }
                 break;
         }
     }
