@@ -60390,6 +60390,18 @@ var Game = /** @class */ (function () {
             case GameSelection.PHOENIX_FLAME:
                 this.BuildParticleSystem();
                 break;
+            case GameSelection.FULL_SCREEN:
+                var elem = document.getElementById("game-canvas");
+                if (elem === null || elem === void 0 ? void 0 : elem.requestFullscreen) {
+                    elem === null || elem === void 0 ? void 0 : elem.requestFullscreen();
+                }
+                // else if (elem?.webkitRequestFullscreen) { /* Safari */
+                //     elem?.webkitRequestFullscreen();
+                // } 
+                // else if (elem?.msRequestFullscreen) { /* IE11 */
+                //     elem?.msRequestFullscreen();
+                // }
+                break;
         }
     };
     Game.prototype.CleanupDemo = function (gameSelection) {
@@ -60426,7 +60438,8 @@ var GameSelection;
     GameSelection[GameSelection["ACE_OF_SHADOWS"] = 0] = "ACE_OF_SHADOWS";
     GameSelection[GameSelection["MAGIC_WORDS"] = 1] = "MAGIC_WORDS";
     GameSelection[GameSelection["PHOENIX_FLAME"] = 2] = "PHOENIX_FLAME";
-    GameSelection[GameSelection["NONE"] = 3] = "NONE";
+    GameSelection[GameSelection["FULL_SCREEN"] = 3] = "FULL_SCREEN";
+    GameSelection[GameSelection["NONE"] = 4] = "NONE";
 })(GameSelection || (exports.GameSelection = GameSelection = {}));
 
 
@@ -60716,8 +60729,8 @@ var UI_Menu = /** @class */ (function () {
     function UI_Menu(game, parent, uiAssets) {
         // button specifics
         this.textButtons = [];
-        this.buttonNames = ['Ace of Shadows', 'Magic Words', 'Phoenix Flame'];
-        this.gameSelections = [Game_1.GameSelection.ACE_OF_SHADOWS, Game_1.GameSelection.MAGIC_WORDS, Game_1.GameSelection.PHOENIX_FLAME];
+        this.buttonNames = ['Ace of Shadows', 'Magic Words', 'Phoenix Flame', 'Full Screen'];
+        this.gameSelections = [Game_1.GameSelection.ACE_OF_SHADOWS, Game_1.GameSelection.MAGIC_WORDS, Game_1.GameSelection.PHOENIX_FLAME, Game_1.GameSelection.FULL_SCREEN];
         this.game = game;
         this.uiAssets = uiAssets;
         this.parent = parent;
@@ -60734,7 +60747,7 @@ var UI_Menu = /** @class */ (function () {
         this.menuBackgroundSprite.width = 512;
         this.menuBackgroundSprite.height = 916;
         this.container.addChild(this.menuBackgroundSprite);
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < this.gameSelections.length; i++) {
             this.textButtons[i] = new UI_TextButton_1.UI_TextButton(this.game, this.container, this.uiAssets);
             this.textButtons[i].Container().position.y = -250 + (i * 200);
             this.textButtons[i].SetButtonText(this.buttonNames[i]);
@@ -60748,7 +60761,7 @@ var UI_Menu = /** @class */ (function () {
         this.menuBackgroundSprite.width = 512;
         this.menuBackgroundSprite.height = 916;
         this.menuBackgroundSprite.angle = 0;
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < this.gameSelections.length; i++) {
             this.textButtons[i].Container().position.x = 0;
             this.textButtons[i].Container().position.y = -250 + (i * 200);
         }
@@ -60761,9 +60774,9 @@ var UI_Menu = /** @class */ (function () {
         this.menuBackgroundSprite.width = 1000;
         this.menuBackgroundSprite.height = 2100;
         this.menuBackgroundSprite.angle = 90;
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < this.gameSelections.length; i++) {
             this.textButtons[i].Container().position.x = 0;
-            this.textButtons[i].Container().position.y = -300 + (i * 150);
+            this.textButtons[i].Container().position.y = -375 + (i * 150);
             ;
         }
         this.container.scale = 1.5;

@@ -149,9 +149,22 @@ export class Game {
                 this.BuildCardSystem();
                 break;
             case GameSelection.MAGIC_WORDS:
+                
                 break;
             case GameSelection.PHOENIX_FLAME:
                 this.BuildParticleSystem();
+                break;
+            case GameSelection.FULL_SCREEN:
+                var elem = document.getElementById("game-canvas");
+                if (elem?.requestFullscreen) {
+                    elem?.requestFullscreen();
+                } 
+                // else if (elem?.webkitRequestFullscreen) { /* Safari */
+                //     elem?.webkitRequestFullscreen();
+                // } 
+                // else if (elem?.msRequestFullscreen) { /* IE11 */
+                //     elem?.msRequestFullscreen();
+                // }
                 break;
         }
     }
@@ -194,5 +207,6 @@ export enum GameSelection {
     ACE_OF_SHADOWS,
     MAGIC_WORDS,
     PHOENIX_FLAME,
+    FULL_SCREEN,
     NONE
 }

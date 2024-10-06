@@ -12,8 +12,8 @@ export class UI_Menu {
 
     // button specifics
     private textButtons: UI_TextButton[] = [];
-    private buttonNames: string[] = ['Ace of Shadows','Magic Words','Phoenix Flame'];
-    private gameSelections: GameSelection[] = [GameSelection.ACE_OF_SHADOWS, GameSelection.MAGIC_WORDS, GameSelection.PHOENIX_FLAME];
+    private buttonNames: string[] = ['Ace of Shadows','Magic Words','Phoenix Flame', 'Full Screen'];
+    private gameSelections: GameSelection[] = [GameSelection.ACE_OF_SHADOWS, GameSelection.MAGIC_WORDS, GameSelection.PHOENIX_FLAME, GameSelection.FULL_SCREEN];
     private menuBackgroundSprite!: PIXI.Sprite;
 
     constructor(game: Game, parent: PIXI.Container, uiAssets: any) {
@@ -37,7 +37,7 @@ export class UI_Menu {
         this.menuBackgroundSprite.height = 916;
         this.container.addChild(this.menuBackgroundSprite);
 
-        for(let i: number = 0; i < 3; i++) {
+        for(let i: number = 0; i < this.gameSelections.length; i++) {
             this.textButtons[i] = new UI_TextButton(this.game, this.container, this.uiAssets);
             this.textButtons[i].Container().position.y = -250 + (i * 200);
             this.textButtons[i].SetButtonText(this.buttonNames[i]);
@@ -54,7 +54,7 @@ export class UI_Menu {
         this.menuBackgroundSprite.height = 916;
         this.menuBackgroundSprite.angle = 0;
 
-        for(let i: number = 0; i < 3; i++) {
+        for(let i: number = 0; i < this.gameSelections.length; i++) {
             this.textButtons[i].Container().position.x = 0;
             this.textButtons[i].Container().position.y = -250 + (i * 200);
         }
@@ -70,9 +70,9 @@ export class UI_Menu {
         this.menuBackgroundSprite.height = 2100;
         this.menuBackgroundSprite.angle = 90;
 
-        for(let i: number = 0; i < 3; i++) {
+        for(let i: number = 0; i < this.gameSelections.length; i++) {
             this.textButtons[i].Container().position.x = 0;
-            this.textButtons[i].Container().position.y = -300 + (i * 150);;
+            this.textButtons[i].Container().position.y = -375 + (i * 150);;
         }
 
         this.container.scale = 1.5;
