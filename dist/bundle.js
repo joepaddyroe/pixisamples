@@ -59649,16 +59649,9 @@ var CardSpriteSheet = /** @class */ (function () {
     function CardSpriteSheet(container, spriteSheet) {
         this.container = new PIXI.Container();
         this.container.scale = 0.5;
-        // spritesheet is ready to use!
         this.animation = new PIXI.AnimatedSprite(spriteSheet.animations.cards);
-        // this.animation.height = 512;
-        // this.animation.width = 512;
         this.animation.anchor = 0.5;
         this.animation.currentFrame = (Math.floor(Math.random() * 12) + 1) - 1;
-        // set the animation speed
-        //this.animation.animationSpeed = 0.1666;
-        //this.animation.play();
-        // add it to the stage to render
         this.container.addChild(this.animation);
         this.animation.pivot.set(this.container.x + 64, this.container.y + 64);
         container.addChild(this.container);
@@ -60326,6 +60319,7 @@ var Game = /** @class */ (function () {
         this.backgroundSprite.x = 0;
         this.backgroundSprite.y = 50;
         this.demoContainer.y = 200;
+        this.demoContainer.scale = 1;
     };
     Game.prototype.SetPotrait = function () {
         if (!this.assetsLoaded)
@@ -60334,6 +60328,7 @@ var Game = /** @class */ (function () {
         this.backgroundSprite.x = 50;
         this.backgroundSprite.y = -window.innerHeight / 6;
         this.demoContainer.y = -(window.innerHeight / 6);
+        this.demoContainer.scale = 1.5;
     };
     Game.prototype.LoadGameAssets = function () {
         return __awaiter(this, void 0, void 0, function () {

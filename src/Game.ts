@@ -76,6 +76,7 @@ export class Game {
         this.backgroundSprite.y = 50;
 
         this.demoContainer.y = 200;
+        this.demoContainer.scale = 1;
     }
 
     private SetPotrait(): void {
@@ -87,6 +88,7 @@ export class Game {
         this.backgroundSprite.y = -window.innerHeight/6;
 
         this.demoContainer.y = -(window.innerHeight/6);
+        this.demoContainer.scale = 1.5;
     }
 
 
