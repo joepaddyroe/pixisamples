@@ -40,3 +40,34 @@ export class Helpers {
     }
 
 }
+
+export class Vector2 {
+    
+    public X: number = 0;
+    public Y: number = 0;
+    
+    constructor(x: number = 0, y:number = 0) {
+        this.X = x;
+        this.Y = y;
+    }
+
+    // add b to this and return
+    public Add(b: Vector2): Vector2 {
+        return new Vector2(this.X + b.X, this.Y + b.Y);
+    }
+
+    // subtract b from this and return
+    public Subtract(b: Vector2): Vector2 {
+        return new Vector2(this.X - b.X, this.Y - b.Y);
+    }
+
+    // multipy this x and y by value and return
+    public Multiply(value: number): Vector2 {
+        return new Vector2(this.X * value, this.Y * value);
+    }
+
+    public Lerp(a: Vector2, b: Vector2, percent: number): Vector2 {
+        //a * (1 - c) + b * c;
+        return (a.Multiply(1-percent).Add(b)).Multiply(percent);
+    }
+}

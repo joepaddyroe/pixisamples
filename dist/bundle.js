@@ -59497,6 +59497,599 @@ exports.earcut = earcut;
 
 /***/ }),
 
+/***/ 50181:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CardSpriteSheet = exports.CardsSystem = void 0;
+var PIXI = __importStar(__webpack_require__(95894));
+var Helpers_1 = __webpack_require__(19593);
+var CardAtlasData_1 = __webpack_require__(62485);
+var CardsSystem = /** @class */ (function () {
+    function CardsSystem() {
+        this.maxCards = 144;
+        this.cards = [];
+        // demo specific
+        this.currentCardIndex = this.maxCards - 1;
+        this.currentTimeOnCard = 0;
+        this.timeToMoveCard = 2;
+        this.container = new PIXI.Container();
+        this.container.pivot = 0.5;
+        this.container.sortableChildren = true;
+        this.BuildSpriteData();
+    }
+    CardsSystem.prototype.Container = function () {
+        return this.container;
+    };
+    CardsSystem.prototype.BuildSpriteData = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var atlasData, spritesheet;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        atlasData = CardAtlasData_1.CardAtlasData.AtlasData;
+                        spritesheet = new PIXI.Spritesheet(PIXI.Texture.from(atlasData.meta.image), atlasData);
+                        // Generate all the Textures asynchronously
+                        return [4 /*yield*/, spritesheet.parse()];
+                    case 1:
+                        // Generate all the Textures asynchronously
+                        _a.sent();
+                        this.cardSpriteSheet = spritesheet;
+                        this.AddCardSpriteSheets();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CardsSystem.prototype.AddCardSpriteSheets = function () {
+        for (var i = 0; i < this.maxCards; i++) {
+            this.cards.push(new CardSpriteSheet(this.container, this.cardSpriteSheet));
+            this.cards[i].SetPosition(new Helpers_1.Vector2(-300, 50 - (i * 4)));
+        }
+    };
+    CardsSystem.prototype.Update = function (deltaTime) {
+        this.currentTimeOnCard += deltaTime;
+        if (this.currentTimeOnCard >= this.timeToMoveCard) {
+            if (this.currentCardIndex > 0) {
+                this.currentTimeOnCard = 0;
+                this.currentCardIndex--;
+            }
+            else {
+                return;
+            }
+        }
+        var progress = this.currentTimeOnCard / this.timeToMoveCard;
+        var targetPosition = new Helpers_1.Vector2(300, -200);
+        var currentPosition = this.cards[this.currentCardIndex].GetPosition();
+        currentPosition = currentPosition.Lerp(currentPosition, targetPosition, progress);
+        // this.cards[this.currentCardIndex].SetPosition(currentPosition);
+    };
+    return CardsSystem;
+}());
+exports.CardsSystem = CardsSystem;
+var CardSpriteSheet = /** @class */ (function () {
+    function CardSpriteSheet(container, spriteSheet) {
+        this.container = new PIXI.Container();
+        this.container.scale = 0.5;
+        // spritesheet is ready to use!
+        this.animation = new PIXI.AnimatedSprite(spriteSheet.animations.cards);
+        // this.animation.height = 512;
+        // this.animation.width = 512;
+        this.animation.anchor = 0.5;
+        this.animation.currentFrame = (Math.floor(Math.random() * 12) + 1) - 1;
+        // set the animation speed
+        //this.animation.animationSpeed = 0.1666;
+        //this.animation.play();
+        // add it to the stage to render
+        this.container.addChild(this.animation);
+        this.animation.pivot.set(this.container.x + 64, this.container.y + 64);
+        container.addChild(this.container);
+        this.container.pivot.set(container.x, container.y);
+    }
+    CardSpriteSheet.prototype.Container = function () {
+        return this.container;
+    };
+    CardSpriteSheet.prototype.SetPosition = function (position) {
+        this.container.position.set(position.X, position.Y);
+    };
+    CardSpriteSheet.prototype.GetPosition = function () {
+        return new Helpers_1.Vector2(this.container.position.x, this.container.position.y);
+    };
+    return CardSpriteSheet;
+}());
+exports.CardSpriteSheet = CardSpriteSheet;
+
+
+/***/ }),
+
+/***/ 51032:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ParticleSpriteSheet = exports.ParticleSystem = void 0;
+var PIXI = __importStar(__webpack_require__(95894));
+var Helpers_1 = __webpack_require__(19593);
+var FireAtlasData_1 = __webpack_require__(1079);
+var ParticleSystem = /** @class */ (function () {
+    function ParticleSystem() {
+        this.particles = [];
+        this.maxParticles = 10;
+        this.playbackSpeed = 0.8;
+        this.speedMin = 290;
+        this.speedMax = 420;
+        this.scaleMin = 0.8;
+        this.scaleMax = 1;
+        this.xWobble = 20;
+        this.duration = 0.5;
+        this.directionVector = new Helpers_1.Vector2();
+        this.rotationSpeed = 0;
+        this.container = new PIXI.Container();
+        this.container.sortableChildren = true;
+        this.directionVector = new Helpers_1.Vector2(0, -1);
+        this.BuildSpriteData();
+    }
+    ParticleSystem.prototype.Container = function () {
+        return this.container;
+    };
+    ParticleSystem.prototype.BuildSpriteData = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var atlasData, spritesheet;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        atlasData = FireAtlasData_1.FireAtlasData.AtlasData;
+                        spritesheet = new PIXI.Spritesheet(PIXI.Texture.from(atlasData.meta.image), atlasData);
+                        // Generate all the Textures asynchronously
+                        return [4 /*yield*/, spritesheet.parse()];
+                    case 1:
+                        // Generate all the Textures asynchronously
+                        _a.sent();
+                        this.particleSpriteSheet = spritesheet;
+                        this.AddParticleSpriteSheets();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ParticleSystem.prototype.AddParticleSpriteSheets = function () {
+        for (var i = 0; i < this.maxParticles; i++) {
+            this.particles.push(new ParticleSpriteSheet(this, this.container, this.particleSpriteSheet));
+            this.particles[i].SetStartTimeOffset((this.duration / this.maxParticles) * i);
+        }
+    };
+    ParticleSystem.prototype.Update = function (delta) {
+        for (var i = 0; i < this.maxParticles; i++) {
+            this.particles[i].Update(delta);
+        }
+    };
+    ParticleSystem.prototype.MaxParticles = function () {
+        return this.maxParticles;
+    };
+    ParticleSystem.prototype.PlaybackSpeed = function () {
+        return this.playbackSpeed;
+    };
+    ParticleSystem.prototype.SpeedMin = function () {
+        return this.speedMin;
+    };
+    ParticleSystem.prototype.SpeedMax = function () {
+        return this.speedMax;
+    };
+    ParticleSystem.prototype.ScaleMin = function () {
+        return this.scaleMin;
+    };
+    ParticleSystem.prototype.ScaleMax = function () {
+        return this.scaleMax;
+    };
+    ParticleSystem.prototype.XWobble = function () {
+        return this.xWobble;
+    };
+    ParticleSystem.prototype.Duration = function () {
+        return this.duration;
+    };
+    ParticleSystem.prototype.DirectionVector = function () {
+        return this.directionVector;
+    };
+    ParticleSystem.prototype.RotationSpeed = function () {
+        return this.rotationSpeed;
+    };
+    return ParticleSystem;
+}());
+exports.ParticleSystem = ParticleSystem;
+var ParticleSpriteSheet = /** @class */ (function () {
+    function ParticleSpriteSheet(parentSystem, container, spriteSheet) {
+        this.currentTElapse = 0;
+        this.startPosition = new Helpers_1.Vector2();
+        this.speed = 0;
+        this.scale = 0;
+        this.xOffset = 0;
+        this.yOffset = 0;
+        this.rotationDirection = 1;
+        this.container = new PIXI.Container();
+        this.particleSystem = parentSystem;
+        // spritesheet is ready to use!
+        this.animation = new PIXI.AnimatedSprite(spriteSheet.animations.fire);
+        this.animation.alpha = 0;
+        this.animation.blendMode = "add";
+        //this.animation.tint = "0xf1f40f"     
+        this.animation.height = 512;
+        this.animation.width = 512;
+        // set the animation speed
+        //this.animation.animationSpeed = 0.1666;
+        //this.animation.play();
+        // add it to the stage to render
+        this.container.addChild(this.animation);
+        this.animation.pivot.set(this.container.x + 64, this.container.y + 64);
+        container.addChild(this.container);
+        this.container.pivot.set(container.x, container.y);
+        this.SetRandomSpeed();
+        this.SetRandomScale();
+        this.SetRandomAnimationFrame();
+        this.SetRandomXOffset();
+    }
+    ParticleSpriteSheet.prototype.SetStartTimeOffset = function (offset) {
+        this.currentTElapse -= offset;
+    };
+    ParticleSpriteSheet.prototype.SetRandomSpeed = function () {
+        this.speed = Math.random() * (this.particleSystem.SpeedMax() - this.particleSystem.SpeedMin()) + this.particleSystem.SpeedMin();
+    };
+    ParticleSpriteSheet.prototype.SetRandomScale = function () {
+        this.scale = Math.random() * (this.particleSystem.ScaleMax() - this.particleSystem.ScaleMin()) + this.particleSystem.ScaleMin();
+    };
+    ParticleSpriteSheet.prototype.SetRandomXOffset = function () {
+        this.xOffset = (Math.random() * this.particleSystem.XWobble()) - this.particleSystem.XWobble();
+        this.xOffset *= (Math.floor(Math.random() * 2) + 1) == 1 ? 1 : -1;
+    };
+    ParticleSpriteSheet.prototype.SetRandomAnimationFrame = function () {
+        this.animation.currentFrame = (Math.floor(Math.random() * 8) + 1) - 1;
+    };
+    ParticleSpriteSheet.prototype.ResetAlpha = function () {
+        this.animation.alpha = 0;
+    };
+    ParticleSpriteSheet.prototype.ResetZIndex = function () {
+        this.container.zIndex = 1;
+    };
+    ParticleSpriteSheet.prototype.ResetPosition = function () {
+        this.SetPosition(this.startPosition);
+    };
+    ParticleSpriteSheet.prototype.SetPosition = function (position) {
+        this.container.position.set(position.X, position.Y);
+    };
+    ParticleSpriteSheet.prototype.SetRandomRotationDirection = function () {
+        this.rotationDirection = (Math.floor(Math.random() * 2) + 1) == 1 ? 1 : -1;
+    };
+    ParticleSpriteSheet.prototype.GetPosition = function () {
+        return new Helpers_1.Vector2(this.container.position.x, this.container.position.y);
+    };
+    ParticleSpriteSheet.prototype.Reset = function () {
+        this.currentTElapse = 0;
+        this.SetRandomSpeed();
+        this.SetRandomScale();
+        this.ResetAlpha();
+        this.ResetPosition();
+        this.SetRandomAnimationFrame();
+        this.SetRandomXOffset();
+        this.ResetZIndex();
+        this.SetRandomRotationDirection();
+    };
+    ParticleSpriteSheet.prototype.Update = function (delta) {
+        delta *= this.particleSystem.PlaybackSpeed();
+        this.currentTElapse += delta;
+        if (this.currentTElapse < 0) {
+            return;
+        }
+        var maxParticles = this.particleSystem.MaxParticles();
+        var duration = this.particleSystem.Duration();
+        var rotationSpeed = this.particleSystem.RotationSpeed();
+        if (this.currentTElapse >= duration) {
+            this.Reset();
+        }
+        var progress = Helpers_1.Helpers.ClampNumber(this.currentTElapse / duration, 0, 1);
+        var targetPosition = this.GetPosition();
+        var velocity = new Helpers_1.Vector2(this.particleSystem.DirectionVector().X * (this.speed * delta), this.particleSystem.DirectionVector().Y * (this.speed * delta));
+        targetPosition = targetPosition.Add(velocity);
+        targetPosition.X = this.xOffset * Math.sin(progress * 3);
+        this.SetPosition(targetPosition);
+        this.container.angle += delta * rotationSpeed * this.rotationDirection;
+        //this.container.scale = this.scale * Math.sin(progress * 3)
+        this.container.scale = this.scale * Math.cos(progress);
+        //this.container.scale = this.scale - (progress > 0.5 ? (this.scale * progress) : 0)
+        this.animation.alpha = Math.sin(progress * 3) * 0.75;
+        this.animation.tint = Helpers_1.Helpers.ColourBlender("#ff1200", "#ffc000", progress);
+        //this.container.zIndex = maxParticles - (progress * maxParticles);
+        //this.animation.height = 512 + (256 * progress);
+        this.animation.width = 512 - (256 * progress);
+        // let animIndex = Math.floor((progress*10) * (0.8));
+        // this.animation.currentFrame = animIndex;
+    };
+    return ParticleSpriteSheet;
+}());
+exports.ParticleSpriteSheet = ParticleSpriteSheet;
+
+
+/***/ }),
+
+/***/ 62485:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CardAtlasData = void 0;
+var CardAtlasData = /** @class */ (function () {
+    function CardAtlasData() {
+    }
+    CardAtlasData.AtlasData = {
+        frames: {
+            card1: {
+                frame: { x: 0, y: 0, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card2: {
+                frame: { x: 341.33, y: 0, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card3: {
+                frame: { x: 682.66, y: 0, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card4: {
+                frame: { x: 1024, y: 0, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card5: {
+                frame: { x: 1365.33, y: 0, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card6: {
+                frame: { x: 1706.66, y: 0, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card7: {
+                frame: { x: 0, y: 512, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card8: {
+                frame: { x: 341.33, y: 512, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card9: {
+                frame: { x: 682.66, y: 512, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card10: {
+                frame: { x: 1024, y: 512, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card11: {
+                frame: { x: 1365.33, y: 512, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            card12: {
+                frame: { x: 1706.66, y: 512, w: 341.33, h: 512 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            }
+        },
+        meta: {
+            image: 'images/playing_cards.png',
+            format: 'RGBA8888',
+            size: { w: 256, h: 256 },
+            scale: 1
+        },
+        animations: {
+            cards: ['card1', 'card2', 'card3', 'card4', 'card5', 'card6', 'card7', 'card8', 'card9', 'card10', 'card11', 'card12']
+        }
+    };
+    return CardAtlasData;
+}());
+exports.CardAtlasData = CardAtlasData;
+
+
+/***/ }),
+
+/***/ 1079:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.FireAtlasData = void 0;
+var FireAtlasData = /** @class */ (function () {
+    function FireAtlasData() {
+    }
+    FireAtlasData.AtlasData = {
+        frames: {
+            flame1: {
+                frame: { x: 0, y: 0, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            flame2: {
+                frame: { x: 128, y: 0, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            flame3: {
+                frame: { x: 256, y: 0, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            flame4: {
+                frame: { x: 384, y: 0, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            flame5: {
+                frame: { x: 0, y: 128, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            flame6: {
+                frame: { x: 128, y: 128, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            flame7: {
+                frame: { x: 256, y: 128, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+            flame8: {
+                frame: { x: 384, y: 128, w: 128, h: 128 },
+                sourceSize: { w: 256, h: 256 },
+                spriteSourceSize: { x: 0, y: 0, w: 256, h: 256 }
+            },
+        },
+        meta: {
+            image: 'images/flame2.png',
+            format: 'RGBA8888',
+            size: { w: 256, h: 256 },
+            scale: 1
+        },
+        animations: {
+            fire: ['flame1', 'flame2', 'flame3', 'flame4', 'flame5', 'flame6', 'flame7', 'flame8']
+        }
+    };
+    return FireAtlasData;
+}());
+exports.FireAtlasData = FireAtlasData;
+
+
+/***/ }),
+
 /***/ 53215:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -59653,9 +60246,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GameSelection = exports.Game = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
+var ParticleSystem_1 = __webpack_require__(51032);
+var CardsSystem_1 = __webpack_require__(50181);
 var Game = /** @class */ (function () {
     function Game(app) {
         this.assetsLoaded = false;
+        // demos specific
+        this.currentGameSelection = GameSelection.NONE;
         this.gameApp = app;
         this.Init();
     }
@@ -59666,6 +60263,10 @@ var Game = /** @class */ (function () {
         this.gameContainer = new PIXI.Container();
         this.gameApp.stage.addChild(this.gameContainer);
         this.gameContainer.pivot = 0.5;
+        this.demoContainer = new PIXI.Container();
+        this.gameContainer.addChild(this.demoContainer);
+        this.demoContainer.position.set(0, 0);
+        this.demoContainer.pivot = 0.5;
         this.OnWindowResize();
     };
     Game.prototype.OnWindowResize = function () {
@@ -59689,6 +60290,7 @@ var Game = /** @class */ (function () {
         this.backgroundSprite.scale = 1.1;
         this.backgroundSprite.x = 0;
         this.backgroundSprite.y = 50;
+        this.demoContainer.y = 200;
     };
     Game.prototype.SetPotrait = function () {
         if (!this.assetsLoaded)
@@ -59696,6 +60298,7 @@ var Game = /** @class */ (function () {
         this.backgroundSprite.scale = 1.5;
         this.backgroundSprite.x = 50;
         this.backgroundSprite.y = -window.innerHeight / 6;
+        this.demoContainer.y = -(window.innerHeight / 6);
     };
     Game.prototype.LoadGameAssets = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -59724,7 +60327,8 @@ var Game = /** @class */ (function () {
         this.assetsLoaded = true;
         this.largeCoverBackgroundSprite = new PIXI.Sprite(this.gameAssets.largeCoverBackground);
         this.largeCoverBackgroundSprite.anchor.set(0.5);
-        this.largeCoverBackgroundSprite.scale = 3;
+        this.largeCoverBackgroundSprite.scale = 2;
+        this.largeCoverBackgroundSprite.tint = 0x555555;
         this.gameContainer.addChild(this.largeCoverBackgroundSprite);
         this.backgroundSprite = new PIXI.Sprite(this.gameAssets.background);
         this.backgroundSprite.anchor.set(0.5);
@@ -59734,9 +60338,53 @@ var Game = /** @class */ (function () {
     Game.prototype.Update = function (deltaTime) {
         if (!this.assetsLoaded)
             return;
+        if (this.flameParticleSystem != null)
+            this.flameParticleSystem.Update(deltaTime);
+        if (this.cardsSystem != null)
+            this.cardsSystem.Update(deltaTime);
     };
     Game.prototype.MenuButonPressed = function (gameSelection) {
-        //console.log("Game Selected: " + GameSelection[gameSelection]);
+        if (this.currentGameSelection == gameSelection)
+            return;
+        if (this.currentGameSelection != GameSelection.NONE)
+            this.CleanupDemo(this.currentGameSelection);
+        this.currentGameSelection = gameSelection;
+        switch (gameSelection) {
+            case GameSelection.ACE_OF_SHADOWS:
+                this.BuildCardSystem();
+                break;
+            case GameSelection.MAGIC_WORDS:
+                break;
+            case GameSelection.PHOENIX_FLAME:
+                this.BuildParticleSystem();
+                break;
+        }
+    };
+    Game.prototype.CleanupDemo = function (gameSelection) {
+        switch (gameSelection) {
+            case GameSelection.ACE_OF_SHADOWS:
+                if (this.cardsSystem != null)
+                    this.demoContainer.removeChild(this.cardsSystem.Container());
+                this.cardsSystem = null;
+                break;
+            case GameSelection.MAGIC_WORDS:
+                break;
+            case GameSelection.PHOENIX_FLAME:
+                if (this.flameParticleSystem != null)
+                    this.demoContainer.removeChild(this.flameParticleSystem.Container());
+                this.flameParticleSystem = null;
+                break;
+        }
+    };
+    Game.prototype.BuildParticleSystem = function () {
+        this.flameParticleSystem = new ParticleSystem_1.ParticleSystem();
+        this.demoContainer.addChild(this.flameParticleSystem.Container());
+        this.flameParticleSystem.Container().position.set(0, 0);
+        this.flameParticleSystem.Container().scale = 2.5;
+    };
+    Game.prototype.BuildCardSystem = function () {
+        this.cardsSystem = new CardsSystem_1.CardsSystem();
+        this.demoContainer.addChild(this.cardsSystem.Container());
     };
     return Game;
 }());
@@ -59746,7 +60394,85 @@ var GameSelection;
     GameSelection[GameSelection["ACE_OF_SHADOWS"] = 0] = "ACE_OF_SHADOWS";
     GameSelection[GameSelection["MAGIC_WORDS"] = 1] = "MAGIC_WORDS";
     GameSelection[GameSelection["PHOENIX_FLAME"] = 2] = "PHOENIX_FLAME";
+    GameSelection[GameSelection["NONE"] = 3] = "NONE";
 })(GameSelection || (exports.GameSelection = GameSelection = {}));
+
+
+/***/ }),
+
+/***/ 19593:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Vector2 = exports.Helpers = void 0;
+var Helpers = /** @class */ (function () {
+    function Helpers() {
+    }
+    Helpers.ClampNumber = function (numberToClamp, min, max) {
+        if (numberToClamp < min) {
+            numberToClamp = min;
+        }
+        else if (numberToClamp > max) {
+            numberToClamp = max;
+        }
+        return numberToClamp;
+    };
+    Helpers.ColourBlender = function (colour1, colour2, percentage) {
+        // Clamp percentage between 0 and 1
+        var clampedPercentage = Math.max(0, Math.min(1, percentage));
+        // Convert the colors to RGB
+        var rgb1 = Helpers.HexToRGB(colour1);
+        var rgb2 = Helpers.HexToRGB(colour2);
+        // Blend the RGB values based on the percentage
+        var r = Math.round(rgb1.r + clampedPercentage * (rgb2.r - rgb1.r));
+        var g = Math.round(rgb1.g + clampedPercentage * (rgb2.g - rgb1.g));
+        var b = Math.round(rgb1.b + clampedPercentage * (rgb2.b - rgb1.b));
+        // Convert the result back to hex and return it
+        return Helpers.RGBToHex(r, g, b);
+    };
+    Helpers.HexToRGB = function (hex) {
+        var bigint = parseInt(hex.slice(1), 16);
+        var r = (bigint >> 16) & 255;
+        var g = (bigint >> 8) & 255;
+        var b = bigint & 255;
+        return { r: r, g: g, b: b };
+    };
+    Helpers.RGBToHex = function (r, g, b) {
+        return "#".concat(((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1));
+    };
+    return Helpers;
+}());
+exports.Helpers = Helpers;
+var Vector2 = /** @class */ (function () {
+    function Vector2(x, y) {
+        if (x === void 0) { x = 0; }
+        if (y === void 0) { y = 0; }
+        this.X = 0;
+        this.Y = 0;
+        this.X = x;
+        this.Y = y;
+    }
+    // add b to this and return
+    Vector2.prototype.Add = function (b) {
+        return new Vector2(this.X + b.X, this.Y + b.Y);
+    };
+    // subtract b from this and return
+    Vector2.prototype.Subtract = function (b) {
+        return new Vector2(this.X - b.X, this.Y - b.Y);
+    };
+    // multipy this x and y by value and return
+    Vector2.prototype.Multiply = function (value) {
+        return new Vector2(this.X * value, this.Y * value);
+    };
+    Vector2.prototype.Lerp = function (a, b, percent) {
+        //a * (1 - c) + b * c;
+        return (a.Multiply(1 - percent).Add(b)).Multiply(percent);
+    };
+    return Vector2;
+}());
+exports.Vector2 = Vector2;
 
 
 /***/ }),
@@ -59819,7 +60545,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UI = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var FPSCounter_1 = __webpack_require__(53215);
-var UI_Menu_1 = __webpack_require__(979);
+var UI_Menu_1 = __webpack_require__(20979);
 var UI = /** @class */ (function () {
     function UI(app) {
         this.assetsLoaded = false;
@@ -59910,7 +60636,7 @@ exports.UI = UI;
 
 /***/ }),
 
-/***/ 979:
+/***/ 20979:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -59941,7 +60667,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UI_Menu = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
-var UI_TextButton_1 = __webpack_require__(591);
+var UI_TextButton_1 = __webpack_require__(43591);
 var Game_1 = __webpack_require__(57484);
 var UI_Menu = /** @class */ (function () {
     function UI_Menu(game, parent, uiAssets) {
@@ -60014,7 +60740,7 @@ exports.UI_Menu = UI_Menu;
 
 /***/ }),
 
-/***/ 591:
+/***/ 43591:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";

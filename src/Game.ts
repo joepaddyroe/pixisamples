@@ -3,6 +3,8 @@ import * as PIXI from 'pixi.js'
 import { Helpers } from './Helpers';
 import { FPSCounter } from './FPSCounter';
 import { UI } from './UI';
+import { ParticleSystem } from './Demos/ParticleSystem';
+import { CardsSystem } from './Demos/CardsSystem';
 
 export class Game {
 
@@ -16,7 +18,12 @@ export class Game {
     // game specific
     private backgroundSprite!: PIXI.Sprite;
     private largeCoverBackgroundSprite!: PIXI.Sprite;
+    private demoContainer!: PIXI.Container;
 
+    // demos specific
+    private currentGameSelection: GameSelection = GameSelection.NONE;
+    private flameParticleSystem!: ParticleSystem | null;
+    private cardsSystem!: CardsSystem | null;
 
     constructor(app: PIXI.Application) {
         this.gameApp = app;        
@@ -31,7 +38,12 @@ export class Game {
 
         this.gameContainer = new PIXI.Container();
         this.gameApp.stage.addChild(this.gameContainer);
-        this.gameContainer.pivot = 0.5        
+        this.gameContainer.pivot = 0.5
+        
+        this.demoContainer = new PIXI.Container();
+        this.gameContainer.addChild(this.demoContainer);
+        this.demoContainer.position.set(0, 0);
+        this.demoContainer.pivot = 0.5;
               
         this.OnWindowResize();       
     }
@@ -62,6 +74,8 @@ export class Game {
         this.backgroundSprite.scale = 1.1;
         this.backgroundSprite.x = 0;
         this.backgroundSprite.y = 50;
+
+        this.demoContainer.y = 200;
     }
 
     private SetPotrait(): void {
@@ -71,6 +85,8 @@ export class Game {
         this.backgroundSprite.scale = 1.5;
         this.backgroundSprite.x = 50;
         this.backgroundSprite.y = -window.innerHeight/6;
+
+        this.demoContainer.y = -(window.innerHeight/6);
     }
 
 
@@ -96,7 +112,8 @@ export class Game {
 
         this.largeCoverBackgroundSprite = new PIXI.Sprite(this.gameAssets.largeCoverBackground);
         this.largeCoverBackgroundSprite.anchor.set(0.5)
-        this.largeCoverBackgroundSprite.scale = 3;
+        this.largeCoverBackgroundSprite.scale = 2;
+        this.largeCoverBackgroundSprite.tint = 0x555555;
         this.gameContainer.addChild(this.largeCoverBackgroundSprite);
 
         this.backgroundSprite = new PIXI.Sprite(this.gameAssets.background);
@@ -110,11 +127,65 @@ export class Game {
         if(!this.assetsLoaded)
             return;
 
+        if(this.flameParticleSystem != null)
+            this.flameParticleSystem.Update(deltaTime);
 
+        if(this.cardsSystem != null)
+            this.cardsSystem.Update(deltaTime);
     }
 
     public MenuButonPressed(gameSelection: GameSelection): void {
-        //console.log("Game Selected: " + GameSelection[gameSelection]);
+               
+        if(this.currentGameSelection == gameSelection)
+            return;
+
+        if(this.currentGameSelection != GameSelection.NONE)
+            this.CleanupDemo(this.currentGameSelection);
+
+        this.currentGameSelection = gameSelection;
+
+        switch(gameSelection) {
+            case GameSelection.ACE_OF_SHADOWS:
+                this.BuildCardSystem();
+                break;
+            case GameSelection.MAGIC_WORDS:
+                break;
+            case GameSelection.PHOENIX_FLAME:
+                this.BuildParticleSystem();
+                break;
+        }
+    }
+
+    private CleanupDemo(gameSelection: GameSelection): void {
+
+        switch(gameSelection) {
+            case GameSelection.ACE_OF_SHADOWS:
+                if(this.cardsSystem != null)
+                    this.demoContainer.removeChild(this.cardsSystem.Container());
+                this.cardsSystem = null;
+                break;
+            case GameSelection.MAGIC_WORDS:
+                break;
+            case GameSelection.PHOENIX_FLAME:
+                if(this.flameParticleSystem != null)
+                    this.demoContainer.removeChild(this.flameParticleSystem.Container());
+                this.flameParticleSystem = null;
+                break;
+        }
+    }
+
+    private BuildParticleSystem(): void {
+
+        this.flameParticleSystem = new ParticleSystem();
+        this.demoContainer.addChild(this.flameParticleSystem.Container());
+
+        this.flameParticleSystem.Container().position.set(0,0);
+        this.flameParticleSystem.Container().scale = 2.5;
+    }
+
+    private BuildCardSystem(): void {
+        this.cardsSystem = new CardsSystem();
+        this.demoContainer.addChild(this.cardsSystem.Container());
     }
 
 }
@@ -122,5 +193,6 @@ export class Game {
 export enum GameSelection {
     ACE_OF_SHADOWS,
     MAGIC_WORDS,
-    PHOENIX_FLAME
+    PHOENIX_FLAME,
+    NONE
 }

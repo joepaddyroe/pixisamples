@@ -6,6 +6,18 @@
             {
             "alias":"background",
             "src":"images/background.png"
+            },
+            {
+            "alias":"flame2",
+            "src":"images/flame2.png"
+            },
+            {
+            "alias":"playing_cards",
+            "src":"images/playing_cards.png"
+            },            
+            {
+               "alias":"largeCoverBackground",
+               "src":"images/largeCoverBackground.png"            
             }
           ]
        },
@@ -23,10 +35,6 @@
             {
               "alias":"fpsBackground",
               "src":"images/fpsBackground.png"
-           },
-           {
-              "alias":"largeCoverBackground",
-              "src":"images/largeCoverBackground.png"            
            }
           ]
        }
