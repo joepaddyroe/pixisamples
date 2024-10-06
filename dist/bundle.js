@@ -60498,6 +60498,7 @@ var Game = /** @class */ (function () {
             scale = window.innerWidth / referenceWidth;
             this.SetPotrait();
         }
+        this.gameApp.renderer.resize(window.innerWidth, window.innerHeight);
         this.gameContainer.position.set(window.innerWidth / 2, window.innerHeight / 2);
         this.gameContainer.scale = scale;
     };
