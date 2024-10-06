@@ -7,6 +7,17 @@ import { ParticleSystem } from './Demos/ParticleSystem';
 import { CardsSystem } from './Demos/CardsSystem';
 import { TextAndImageTool } from './Demos/TextAndImageTool';
 
+
+/*
+Main Game content holder
+Responsible for scaling and positioning Game components like the main background or the Demo content
+which is rooted in the "demoContainer" Container, when resolution or orientation changes
+It also updates any Game items in need of delta updates
+Here we also recieve commands from UI elements like buttons and it here that we 
+Remove previous demos and add new ones for play
+*/
+
+
 export class Game {
 
     // game object specifics
@@ -69,6 +80,7 @@ export class Game {
         this.gameContainer.scale = scale;        
     }
 
+    // organise all objects for landscape view
     private SetLandscape(): void {
         if(!this.assetsLoaded)
             return;
@@ -81,6 +93,7 @@ export class Game {
         this.demoContainer.scale = 1;
     }
 
+    // organise all objects for portrait view
     private SetPotrait(): void {
         if(!this.assetsLoaded)
             return;
@@ -101,6 +114,7 @@ export class Game {
         let x = 0;
         let y = 0;
 
+        // not used but left it in as its handy
         this.gameApp.canvas.addEventListener('mousemove', (e) =>
         {
             x = e.clientX;
@@ -126,6 +140,8 @@ export class Game {
         this.gameContainer.addChild(this.backgroundSprite);
     }
 
+    // updating any objects that are in fact instanced
+    // note we wait here until the assetsLoaded flag is true
     public Update(deltaTime: number): void {
 
         if(!this.assetsLoaded)
@@ -140,6 +156,12 @@ export class Game {
         if(this.imageTextTool != null)
             this.imageTextTool.Update(deltaTime);
     }
+
+    // triggered by button onClick event in UI_TextButton
+    // removes previous demo item from demoContainer if one was there
+    // then instances anew demo and attaches to the demoContainer
+    // NOTE: we check for full screen clicks and early return through same menu and system which needs fixing.
+    // just pointing out to avoid confusion
 
     public MenuButonPressed(gameSelection: GameSelection): void {
                
@@ -193,6 +215,10 @@ export class Game {
         }
     }
 
+
+    // Demos
+    // building individual demos and setting initial values
+
     private BuildParticleSystem(): void {
 
         this.flameParticleSystem = new ParticleSystem();
@@ -214,6 +240,8 @@ export class Game {
 
 }
 
+// I shoe horned the full screen selector in here
+// simply for speed and convenience
 export enum GameSelection {
     ACE_OF_SHADOWS,
     MAGIC_WORDS,

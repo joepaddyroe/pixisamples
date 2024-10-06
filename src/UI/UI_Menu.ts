@@ -2,6 +2,14 @@ import * as PIXI from 'pixi.js'
 import { UI_TextButton } from './UI_TextButton';
 import { Game, GameSelection } from '../Game';
 
+/*
+Main UI content holder
+Responsible for scaling and positioning UI components like the menu or the fps container
+When resolution or orientation changes
+It also updates any UI items in need of delta updates
+*/
+
+
 export class UI_Menu {
 
     // game object specifics

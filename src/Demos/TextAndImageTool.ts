@@ -2,6 +2,12 @@ import * as PIXI from 'pixi.js'
 import { Helpers, Vector2 } from '../Helpers';
 import { CardAtlasData } from './SpriteAtlasData/CardAtlasData';
 
+/*
+This text and image tool class modifies the style componets of a PIXI Text
+It also constructs a randomised sentence rom a series of verbs, subjects and objects
+The object of the sentence is usd to select an image associated by alias
+*/
+
 export class TextAndImageTool {
 
     private container: PIXI.Container;
@@ -49,6 +55,8 @@ export class TextAndImageTool {
             this.richText.alpha = this.alphaFadeIn;
     }
 
+    // randomising most of the the text style components here
+    // would have liked to do more with the fill but its basically more of the same
     private DoImageTextSwap(): void {
 
         this.alphaFadeIn = 0;
@@ -100,6 +108,8 @@ export class TextAndImageTool {
         return `#${randomColor.toString(16).padStart(6, '0')}`;
     }
 
+    // This is fun wy of generating completely random sentences
+    // and also triggering the image swap based on the "object" of the sentence
     private GenerateRandomSentence(): string {
 
         const subjects = ['The cat', 'A dog', 'My friend', 'The teacher', 'An artist', 'A scientist', 'A musician', 'The baker', 'The bird', 'The child'];
@@ -110,12 +120,15 @@ export class TextAndImageTool {
         const verb = verbs[Math.floor(Math.random() * verbs.length)];
         const object = objects[Math.floor(Math.random() * objects.length)];
     
-        this.SetImageSprite(object);
+        this.SetImageSprite(object); // Swapping the image here
 
         return `${subject} ${verb} ${object}.`;
 
     }
 
+    // here I'm stripping out the white space of the object part of the sentence
+    // and using it to grab the alias of the texture
+    // then setting the main image that way
     private SetImageSprite(objectName: string): void {      
 
         if(this.imageSprite != null)

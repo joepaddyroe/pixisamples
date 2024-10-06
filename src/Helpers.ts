@@ -1,5 +1,7 @@
-import { resetUids } from "pixi.js";
 
+/*
+    A simple list of easy to grab helper objects and static functions
+*/
 
 export class Helpers {
     public static ClampNumber(numberToClamp: number, min : number, max: number): number {
@@ -68,6 +70,7 @@ export class Vector2 {
     }
 
     public Lerp(a: Vector2, b: Vector2, percent: number): Vector2 {
+        
         //a * (1 - c) + b * c;
         let result: Vector2 = a;
         result = result.Multiply(1-percent);

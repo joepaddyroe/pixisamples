@@ -2,6 +2,16 @@ import * as PIXI from 'pixi.js'
 import { Helpers, Vector2 } from '../Helpers';
 import { CardAtlasData } from './SpriteAtlasData/CardAtlasData';
 
+
+
+/*
+This card system class instantiates a predefined number of sprites
+in the form of CardSpriteSheet
+The CardSpriteSheet is responsible for maintaining the sprite and the position/roation of the card
+I have used a PIXI Spritesheet here to hold all of the textures for the cards and then I can select them as animation frames
+Currently this is randomly selected
+*/
+
 export class CardsSystem {
 
     private container: PIXI.Container;
@@ -27,7 +37,7 @@ export class CardsSystem {
         this.BuildSpriteData();
     }
 
-
+    // load up the data from the atlas before triggering instantiation of sprites
     private async BuildSpriteData(): Promise<any> {
 
         const atlasData = CardAtlasData.AtlasData;
@@ -37,7 +47,6 @@ export class CardsSystem {
             atlasData
         );
 
-        // Generate all the Textures asynchronously
         await spritesheet.parse();
 
         this.cardSpriteSheet = spritesheet;
@@ -45,6 +54,8 @@ export class CardsSystem {
         this.AddCardSpriteSheets();
     }
 
+    // instatiation of card objects with some postioning
+    // to the deck
     private AddCardSpriteSheets(): void {
         for(let i: number = 0; i < this.maxCards; i++) {
             let card: CardSpriteSheet = new CardSpriteSheet(this.container, this.cardSpriteSheet);
@@ -54,6 +65,10 @@ export class CardsSystem {
         }
     }
 
+    // first waiting for the 1 second interval
+    // then starting the interpolation of position and rotation
+    // to the target position
+    // then resetting the  second interval when the card has reached its target
     public Update(deltaTime: number): void {
         
         if(this.currentTimeOnCard > 0) {

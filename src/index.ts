@@ -2,6 +2,13 @@ import * as PIXI from 'pixi.js'
 import { Game } from './Game';
 import { UI } from './UI';
 
+/*
+This is the entry point for the app
+Here we create an instance of Game and UI
+And they take care of their own loading of assets and Initialisation independently of one another
+We also assign the ticker here and update the Update functions with delta time
+*/
+
 const app = new PIXI.Application();
 
 class Startup {

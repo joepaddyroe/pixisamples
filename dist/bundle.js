@@ -59566,6 +59566,13 @@ exports.CardSpriteSheet = exports.CardsSystem = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var Helpers_1 = __webpack_require__(19593);
 var CardAtlasData_1 = __webpack_require__(62485);
+/*
+This card system class instantiates a predefined number of sprites
+in the form of CardSpriteSheet
+The CardSpriteSheet is responsible for maintaining the sprite and the position/roation of the card
+I have used a PIXI Spritesheet here to hold all of the textures for the cards and then I can select them as animation frames
+Currently this is randomly selected
+*/
 var CardsSystem = /** @class */ (function () {
     function CardsSystem() {
         this.maxCards = 144;
@@ -59584,6 +59591,7 @@ var CardsSystem = /** @class */ (function () {
     CardsSystem.prototype.Container = function () {
         return this.container;
     };
+    // load up the data from the atlas before triggering instantiation of sprites
     CardsSystem.prototype.BuildSpriteData = function () {
         return __awaiter(this, void 0, void 0, function () {
             var atlasData, spritesheet;
@@ -59592,10 +59600,8 @@ var CardsSystem = /** @class */ (function () {
                     case 0:
                         atlasData = CardAtlasData_1.CardAtlasData.AtlasData;
                         spritesheet = new PIXI.Spritesheet(PIXI.Texture.from(atlasData.meta.image), atlasData);
-                        // Generate all the Textures asynchronously
                         return [4 /*yield*/, spritesheet.parse()];
                     case 1:
-                        // Generate all the Textures asynchronously
                         _a.sent();
                         this.cardSpriteSheet = spritesheet;
                         this.AddCardSpriteSheets();
@@ -59604,6 +59610,8 @@ var CardsSystem = /** @class */ (function () {
             });
         });
     };
+    // instatiation of card objects with some postioning
+    // to the deck
     CardsSystem.prototype.AddCardSpriteSheets = function () {
         for (var i = 0; i < this.maxCards; i++) {
             var card = new CardSpriteSheet(this.container, this.cardSpriteSheet);
@@ -59612,6 +59620,10 @@ var CardsSystem = /** @class */ (function () {
             this.cards.push(card);
         }
     };
+    // first waiting for the 1 second interval
+    // then starting the interpolation of position and rotation
+    // to the target position
+    // then resetting the  second interval when the card has reached its target
     CardsSystem.prototype.Update = function (deltaTime) {
         if (this.currentTimeOnCard > 0) {
             this.currentTimeOnCard -= deltaTime;
@@ -59757,19 +59769,33 @@ exports.ParticleSpriteSheet = exports.ParticleSystem = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var Helpers_1 = __webpack_require__(19593);
 var FireAtlasData_1 = __webpack_require__(1079);
+/*
+This particle system class instantiates a predefined number of sprites
+in the form of ParticleSpriteSheet
+The ParticleSpriteSheet is responsible for maintaining the all of the standard particle
+requirements like position, rotation, scale, alpha etc
+I have used a PIXI Spritesheet here to hold all of the textures for the particles and then I can select them as animation frames
+Currently this is randomly selected when each particle restarts its journey
+I was hoping this would add moe randomness to the particle pattern as we are limited to 10 sprites on screen
+at a given time.
+Using an animated sprite still uses one sprite, but shifts the texture coordinates (as far as I can tell... :)
+
+NOTE: this is incomplete - I would have liked to make sliders/toggles for all of the various settings but ran out of time
+A lot of the finer tuning is hard coded in the ParticleSpriteSheet class, which I would like to move out into public accessors through ParticleSystem
+*/
 var ParticleSystem = /** @class */ (function () {
     function ParticleSystem() {
         this.particles = [];
         this.maxParticles = 10;
-        this.playbackSpeed = 0.8;
+        this.playbackSpeed = 0.8; // Overall playback percentage speed
         this.speedMin = 290;
         this.speedMax = 420;
         this.scaleMin = 0.8;
         this.scaleMax = 1;
-        this.xWobble = 20;
-        this.duration = 0.5;
-        this.directionVector = new Helpers_1.Vector2();
-        this.rotationSpeed = 0;
+        this.xWobble = 20; // gives a random x position offset when emmitting from the base
+        this.duration = 0.5; // also known as lifetime in other systems
+        this.directionVector = new Helpers_1.Vector2(); // what direction on the canvas the particles travel
+        this.rotationSpeed = 0; // not using here as I opted to stretch the particle sprite for better effect
         this.container = new PIXI.Container();
         this.container.sortableChildren = true;
         this.directionVector = new Helpers_1.Vector2(0, -1);
@@ -59798,6 +59824,10 @@ var ParticleSystem = /** @class */ (function () {
             });
         });
     };
+    // instatiation of particle objects with an additional timer offset
+    // which guarantees that each particle will be released and spaced out evenly
+    // so we don't have gaps
+    // This is controlled by duration vs maxParticles
     ParticleSystem.prototype.AddParticleSpriteSheets = function () {
         for (var i = 0; i < this.maxParticles; i++) {
             this.particles.push(new ParticleSpriteSheet(this, this.container, this.particleSpriteSheet));
@@ -59843,6 +59873,13 @@ var ParticleSystem = /** @class */ (function () {
 }());
 exports.ParticleSystem = ParticleSystem;
 var ParticleSpriteSheet = /** @class */ (function () {
+    /*
+    It gets a little messy in here and I have left in some commented chunks for:
+    me to remember to try out in different ways and settings.
+    Note that these paticles can have their own animation playing over frames
+    I would have liked to try a flame animation with 24+ frames here
+    but ran out of time
+    */
     function ParticleSpriteSheet(parentSystem, container, spriteSheet) {
         this.currentTElapse = 0;
         this.startPosition = new Helpers_1.Vector2();
@@ -59918,6 +59955,12 @@ var ParticleSpriteSheet = /** @class */ (function () {
         this.ResetZIndex();
         this.SetRandomRotationDirection();
     };
+    /*
+    A lot going on here bu in short
+    Each frame is being progressed over a percentage of time notes as 'progress'
+    Lots of hard coded "Fire" related stuff like how things are scaled or the alpha fade in/out
+    Ideally I would have had this out in the main particle system to control
+    */
     ParticleSpriteSheet.prototype.Update = function (delta) {
         delta *= this.particleSystem.PlaybackSpeed();
         this.currentTElapse += delta;
@@ -60147,6 +60190,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TextAndImageTool = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var Helpers_1 = __webpack_require__(19593);
+/*
+This text and image tool class modifies the style componets of a PIXI Text
+It also constructs a randomised sentence rom a series of verbs, subjects and objects
+The object of the sentence is usd to select an image associated by alias
+*/
 var TextAndImageTool = /** @class */ (function () {
     function TextAndImageTool(gameAssets) {
         // demo specific
@@ -60180,6 +60228,8 @@ var TextAndImageTool = /** @class */ (function () {
         if (this.richText)
             this.richText.alpha = this.alphaFadeIn;
     };
+    // randomising most of the the text style components here
+    // would have liked to do more with the fill but its basically more of the same
     TextAndImageTool.prototype.DoImageTextSwap = function () {
         this.alphaFadeIn = 0;
         if (this.richText != null)
@@ -60215,6 +60265,8 @@ var TextAndImageTool = /** @class */ (function () {
         var randomColor = Math.floor(Math.random() * 0xFFFFFF);
         return "#".concat(randomColor.toString(16).padStart(6, '0'));
     };
+    // This is fun wy of generating completely random sentences
+    // and also triggering the image swap based on the "object" of the sentence
     TextAndImageTool.prototype.GenerateRandomSentence = function () {
         var subjects = ['The cat', 'A dog', 'My friend', 'The teacher', 'An artist', 'A scientist', 'A musician', 'The baker', 'The bird', 'The child'];
         var verbs = ['runs', 'jumps', 'paints', 'sings', 'teaches', 'eats', 'creates', 'builds', 'draws', 'explores'];
@@ -60222,9 +60274,12 @@ var TextAndImageTool = /** @class */ (function () {
         var subject = subjects[Math.floor(Math.random() * subjects.length)];
         var verb = verbs[Math.floor(Math.random() * verbs.length)];
         var object = objects[Math.floor(Math.random() * objects.length)];
-        this.SetImageSprite(object);
+        this.SetImageSprite(object); // Swapping the image here
         return "".concat(subject, " ").concat(verb, " ").concat(object, ".");
     };
+    // here I'm stripping out the white space of the object part of the sentence
+    // and using it to grab the alias of the texture
+    // then setting the main image that way
     TextAndImageTool.prototype.SetImageSprite = function (objectName) {
         if (this.imageSprite != null)
             this.container.removeChild(this.imageSprite);
@@ -60402,6 +60457,14 @@ var PIXI = __importStar(__webpack_require__(95894));
 var ParticleSystem_1 = __webpack_require__(51032);
 var CardsSystem_1 = __webpack_require__(50181);
 var TextAndImageTool_1 = __webpack_require__(292);
+/*
+Main Game content holder
+Responsible for scaling and positioning Game components like the main background or the Demo content
+which is rooted in the "demoContainer" Container, when resolution or orientation changes
+It also updates any Game items in need of delta updates
+Here we also recieve commands from UI elements like buttons and it here that we
+Remove previous demos and add new ones for play
+*/
 var Game = /** @class */ (function () {
     function Game(app) {
         this.assetsLoaded = false;
@@ -60438,6 +60501,7 @@ var Game = /** @class */ (function () {
         this.gameContainer.position.set(window.innerWidth / 2, window.innerHeight / 2);
         this.gameContainer.scale = scale;
     };
+    // organise all objects for landscape view
     Game.prototype.SetLandscape = function () {
         if (!this.assetsLoaded)
             return;
@@ -60447,6 +60511,7 @@ var Game = /** @class */ (function () {
         this.demoContainer.y = 200;
         this.demoContainer.scale = 1;
     };
+    // organise all objects for portrait view
     Game.prototype.SetPotrait = function () {
         if (!this.assetsLoaded)
             return;
@@ -60468,6 +60533,7 @@ var Game = /** @class */ (function () {
                         _a.gameAssets = _b.sent();
                         x = 0;
                         y = 0;
+                        // not used but left it in as its handy
                         this.gameApp.canvas.addEventListener('mousemove', function (e) {
                             x = e.clientX;
                             y = e.clientY;
@@ -60491,6 +60557,8 @@ var Game = /** @class */ (function () {
         this.backgroundSprite.scale = 1.3;
         this.gameContainer.addChild(this.backgroundSprite);
     };
+    // updating any objects that are in fact instanced
+    // note we wait here until the assetsLoaded flag is true
     Game.prototype.Update = function (deltaTime) {
         if (!this.assetsLoaded)
             return;
@@ -60501,6 +60569,11 @@ var Game = /** @class */ (function () {
         if (this.imageTextTool != null)
             this.imageTextTool.Update(deltaTime);
     };
+    // triggered by button onClick event in UI_TextButton
+    // removes previous demo item from demoContainer if one was there
+    // then instances anew demo and attaches to the demoContainer
+    // NOTE: we check for full screen clicks and early return through same menu and system which needs fixing.
+    // just pointing out to avoid confusion
     Game.prototype.MenuButonPressed = function (gameSelection) {
         if (gameSelection == GameSelection.FULL_SCREEN) {
             var elem = document.getElementById("game-canvas");
@@ -60545,6 +60618,8 @@ var Game = /** @class */ (function () {
                 break;
         }
     };
+    // Demos
+    // building individual demos and setting initial values
     Game.prototype.BuildParticleSystem = function () {
         this.flameParticleSystem = new ParticleSystem_1.ParticleSystem();
         this.demoContainer.addChild(this.flameParticleSystem.Container());
@@ -60562,6 +60637,8 @@ var Game = /** @class */ (function () {
     return Game;
 }());
 exports.Game = Game;
+// I shoe horned the full screen selector in here
+// simply for speed and convenience
 var GameSelection;
 (function (GameSelection) {
     GameSelection[GameSelection["ACE_OF_SHADOWS"] = 0] = "ACE_OF_SHADOWS";
@@ -60579,6 +60656,9 @@ var GameSelection;
 
 "use strict";
 
+/*
+    A simple list of easy to grab helper objects and static functions
+*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Vector2 = exports.Helpers = void 0;
 var Helpers = /** @class */ (function () {
@@ -60856,6 +60936,12 @@ exports.UI_Menu = void 0;
 var PIXI = __importStar(__webpack_require__(95894));
 var UI_TextButton_1 = __webpack_require__(43591);
 var Game_1 = __webpack_require__(57484);
+/*
+Main UI content holder
+Responsible for scaling and positioning UI components like the menu or the fps container
+When resolution or orientation changes
+It also updates any UI items in need of delta updates
+*/
 var UI_Menu = /** @class */ (function () {
     function UI_Menu(game, parent, uiAssets) {
         // button specifics
@@ -61098,6 +61184,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 var PIXI = __importStar(__webpack_require__(95894));
 var Game_1 = __webpack_require__(57484);
 var UI_1 = __webpack_require__(66668);
+/*
+This is the entry point for the app
+Here we create an instance of Game and UI
+And they take care of their own loading of assets and Initialisation independently of one another
+We also assign the ticker here and update the Update functions with delta time
+*/
 var app = new PIXI.Application();
 var Startup = /** @class */ (function () {
     function Startup() {

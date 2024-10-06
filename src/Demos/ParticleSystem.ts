@@ -2,21 +2,39 @@ import * as PIXI from 'pixi.js'
 import { Helpers, Vector2 } from '../Helpers';
 import { FireAtlasData } from './SpriteAtlasData/FireAtlasData';
 
+
+
+/*
+This particle system class instantiates a predefined number of sprites
+in the form of ParticleSpriteSheet
+The ParticleSpriteSheet is responsible for maintaining the all of the standard particle
+requirements like position, rotation, scale, alpha etc
+I have used a PIXI Spritesheet here to hold all of the textures for the particles and then I can select them as animation frames
+Currently this is randomly selected when each particle restarts its journey
+I was hoping this would add moe randomness to the particle pattern as we are limited to 10 sprites on screen
+at a given time.
+Using an animated sprite still uses one sprite, but shifts the texture coordinates (as far as I can tell... :)
+
+NOTE: this is incomplete - I would have liked to make sliders/toggles for all of the various settings but ran out of time
+A lot of the finer tuning is hard coded in the ParticleSpriteSheet class, which I would like to move out into public accessors through ParticleSystem
+*/
+
+
 export class ParticleSystem {
 
     private container: PIXI.Container;
     private particles: ParticleSpriteSheet[] = [];
     private particleSpriteSheet!: PIXI.Spritesheet;
     private maxParticles: number = 10;
-    private playbackSpeed: number = 0.8;
+    private playbackSpeed: number = 0.8; // Overall playback percentage speed
     private speedMin: number = 290;
     private speedMax: number = 420;
     private scaleMin: number = 0.8;
     private scaleMax: number = 1;
-    private xWobble: number = 20;
-    private duration: number = 0.5;
-    private directionVector: Vector2 = new Vector2();
-    private rotationSpeed: number = 0;
+    private xWobble: number = 20; // gives a random x position offset when emmitting from the base
+    private duration: number = 0.5; // also known as lifetime in other systems
+    private directionVector: Vector2 = new Vector2(); // what direction on the canvas the particles travel
+    private rotationSpeed: number = 0; // not using here as I opted to stretch the particle sprite for better effect
 
     public Container(): PIXI.Container {
         return this.container;
@@ -47,6 +65,10 @@ export class ParticleSystem {
         this.AddParticleSpriteSheets();
     }
 
+    // instatiation of particle objects with an additional timer offset
+    // which guarantees that each particle will be released and spaced out evenly
+    // so we don't have gaps
+    // This is controlled by duration vs maxParticles
     private AddParticleSpriteSheets(): void {
         for(let i: number = 0; i < this.maxParticles; i++) {
             this.particles.push(new ParticleSpriteSheet(this, this.container, this.particleSpriteSheet))
@@ -114,6 +136,15 @@ export class ParticleSpriteSheet {
     private xOffset: number = 0;
     private yOffset: number = 0;
     private rotationDirection: number = 1;
+
+
+    /*
+    It gets a little messy in here and I have left in some commented chunks for:
+    me to remember to try out in different ways and settings.
+    Note that these paticles can have their own animation playing over frames
+    I would have liked to try a flame animation with 24+ frames here
+    but ran out of time    
+    */
 
     constructor(parentSystem: ParticleSystem, container: PIXI.Container, spriteSheet: PIXI.Spritesheet) {
 
@@ -203,7 +234,12 @@ export class ParticleSpriteSheet {
     }
 
     
-
+    /*
+    A lot going on here bu in short
+    Each frame is being progressed over a percentage of time notes as 'progress'
+    Lots of hard coded "Fire" related stuff like how things are scaled or the alpha fade in/out
+    Ideally I would have had this out in the main particle system to control
+    */
     public Update(delta: number): void {
 
         delta *= this.particleSystem.PlaybackSpeed()
