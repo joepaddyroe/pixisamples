@@ -29,16 +29,19 @@ export class FPSCounter {
         this.container.addChild(this.fpsText)
         this.fpsText.x = 50;
         this.fpsText.y = 50;
+        this.fpsText.style.fontWeight = "bolder";
         
         this.fpsLowText = new PIXI.Text({ text: 'LO: 0' })
         this.container.addChild(this.fpsLowText)
         this.fpsLowText.x = 180;
         this.fpsLowText.y = 50;
+        this.fpsLowText.style.fontWeight = "bolder";
 
         this.fpsHighText = new PIXI.Text({ text: 'HI: 0' })
         this.container.addChild(this.fpsHighText)
         this.fpsHighText.x = 300;
         this.fpsHighText.y = 50;
+        this.fpsHighText.style.fontWeight = "bolder";
 
     }
 

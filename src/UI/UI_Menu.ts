@@ -55,7 +55,7 @@ export class UI_Menu {
         this.menuBackgroundSprite.angle = 0;
 
         for(let i: number = 0; i < this.gameSelections.length; i++) {
-            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.x = -70;
             this.textButtons[i].Container().position.y = -250 + (i * 200);
         }
 
@@ -71,7 +71,7 @@ export class UI_Menu {
         this.menuBackgroundSprite.angle = 90;
 
         for(let i: number = 0; i < this.gameSelections.length; i++) {
-            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.x = 400;
             this.textButtons[i].Container().position.y = -375 + (i * 150);;
         }
 

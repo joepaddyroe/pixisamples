@@ -60168,14 +60168,17 @@ var FPSCounter = /** @class */ (function () {
         this.container.addChild(this.fpsText);
         this.fpsText.x = 50;
         this.fpsText.y = 50;
+        this.fpsText.style.fontWeight = "bolder";
         this.fpsLowText = new PIXI.Text({ text: 'LO: 0' });
         this.container.addChild(this.fpsLowText);
         this.fpsLowText.x = 180;
         this.fpsLowText.y = 50;
+        this.fpsLowText.style.fontWeight = "bolder";
         this.fpsHighText = new PIXI.Text({ text: 'HI: 0' });
         this.container.addChild(this.fpsHighText);
         this.fpsHighText.x = 300;
         this.fpsHighText.y = 50;
+        this.fpsHighText.style.fontWeight = "bolder";
     }
     FPSCounter.prototype.Container = function () {
         return this.container;
@@ -60634,6 +60637,7 @@ var UI = /** @class */ (function () {
     UI.prototype.SetLandscape = function (scale) {
         if (!this.assetsLoaded)
             return;
+        this.fpsCounter.Container().scale = scale;
         var aspectRatio = this.referenceWidth / this.referenceHeight;
         var currentAspectRatio = window.innerWidth / window.innerHeight;
         var currentX = 0;
@@ -60650,8 +60654,9 @@ var UI = /** @class */ (function () {
     UI.prototype.SetPotrait = function (scale) {
         if (!this.assetsLoaded)
             return;
+        // this.fpsCounter.Container().scale = scale;
         var currentX = window.innerWidth / 2;
-        this.uiAnchorRight.position.set(currentX, window.innerHeight - 100);
+        this.uiAnchorRight.position.set(currentX, window.innerHeight - 150);
         this.uiAnchorRight.scale = scale;
         this.uiMenu.SetOrientationPortrait();
     };
@@ -60762,7 +60767,7 @@ var UI_Menu = /** @class */ (function () {
         this.menuBackgroundSprite.height = 916;
         this.menuBackgroundSprite.angle = 0;
         for (var i = 0; i < this.gameSelections.length; i++) {
-            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.x = -70;
             this.textButtons[i].Container().position.y = -250 + (i * 200);
         }
         this.container.scale = 1;
@@ -60775,7 +60780,7 @@ var UI_Menu = /** @class */ (function () {
         this.menuBackgroundSprite.height = 2100;
         this.menuBackgroundSprite.angle = 90;
         for (var i = 0; i < this.gameSelections.length; i++) {
-            this.textButtons[i].Container().position.x = 0;
+            this.textButtons[i].Container().position.x = 400;
             this.textButtons[i].Container().position.y = -375 + (i * 150);
             ;
         }
@@ -60851,10 +60856,11 @@ var UI_TextButton = /** @class */ (function () {
         this.buttonSprite.on('pointerdown', function () { _this.ButtonClicked(); });
         this.container.addChild(this.buttonSprite);
         this.buttonText = new PIXI.Text({ text: 'BUTTON' });
-        this.buttonText.x = -50;
+        this.buttonText.x = -20;
         this.buttonText.y = 0;
         this.buttonText.anchor = 0.5;
-        this.buttonText.style.fontSize = 30;
+        this.buttonText.style.fontSize = 40;
+        this.buttonText.style.fontWeight = "bolder";
         this.container.addChild(this.buttonText);
     };
     UI_TextButton.prototype.Container = function () {

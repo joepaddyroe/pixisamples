@@ -42,10 +42,11 @@ export class UI_TextButton {
         
         
         this.buttonText = new PIXI.Text({ text: 'BUTTON' })
-        this.buttonText.x = -50;
+        this.buttonText.x = -20;
         this.buttonText.y = 0;
         this.buttonText.anchor = 0.5;
-        this.buttonText.style.fontSize = 30;
+        this.buttonText.style.fontSize = 40;
+        this.buttonText.style.fontWeight = "bolder";
         this.container.addChild(this.buttonText)
     }
 

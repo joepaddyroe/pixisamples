@@ -49,13 +49,15 @@ export class UI {
         } else { //width governs
             scale = window.innerWidth / this.referenceWidth;
             this.SetPotrait(scale);
-        }        
+        }          
     }
 
     private SetLandscape(scale: number): void {
         if(!this.assetsLoaded)
             return;
       
+        this.fpsCounter.Container().scale = scale;
+
         const aspectRatio: number = this.referenceWidth/this.referenceHeight;
         const currentAspectRatio: number = window.innerWidth/window.innerHeight;
 
@@ -77,8 +79,10 @@ export class UI {
         if(!this.assetsLoaded)
             return;
 
+        // this.fpsCounter.Container().scale = scale;
+
         let currentX = window.innerWidth/2;
-        this.uiAnchorRight.position.set(currentX, window.innerHeight - 100)
+        this.uiAnchorRight.position.set(currentX, window.innerHeight - 150)
         this.uiAnchorRight.scale = scale;
 
         this.uiMenu.SetOrientationPortrait();
