@@ -1,3 +1,4 @@
+import { resetUids } from "pixi.js";
 
 
 export class Helpers {
@@ -68,6 +69,24 @@ export class Vector2 {
 
     public Lerp(a: Vector2, b: Vector2, percent: number): Vector2 {
         //a * (1 - c) + b * c;
-        return (a.Multiply(1-percent).Add(b)).Multiply(percent);
+        let result: Vector2 = a;
+        result = result.Multiply(1-percent);
+        result = result.Add(b);
+        result = result.Multiply(percent);
+
+        return result;
+
+        //return (a.Multiply(1-percent).Add(b)).Multiply(percent);
+    }
+
+    public static LerpDirect(start: Vector2, end: Vector2, t: number): Vector2 {
+        return new Vector2(
+            start.X + (end.X - start.X) * t,
+            start.Y + (end.Y - start.Y) * t
+        );
+    }
+
+    public static LerpNumber(start: number, end: number, t: number): number {
+        return start + (end - start) * t;
     }
 }

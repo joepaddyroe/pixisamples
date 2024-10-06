@@ -59573,7 +59573,9 @@ var CardsSystem = /** @class */ (function () {
         // demo specific
         this.currentCardIndex = this.maxCards - 1;
         this.currentTimeOnCard = 0;
-        this.timeToMoveCard = 2;
+        this.timeToMoveCard = 1; // delay between card moves
+        this.cardMoveTime = 0;
+        this.cardMoveDuration = 2; // how long it takes to move a card
         this.container = new PIXI.Container();
         this.container.pivot = 0.5;
         this.container.sortableChildren = true;
@@ -59604,26 +59606,41 @@ var CardsSystem = /** @class */ (function () {
     };
     CardsSystem.prototype.AddCardSpriteSheets = function () {
         for (var i = 0; i < this.maxCards; i++) {
-            this.cards.push(new CardSpriteSheet(this.container, this.cardSpriteSheet));
-            this.cards[i].SetPosition(new Helpers_1.Vector2(-300, 50 - (i * 4)));
+            var card = new CardSpriteSheet(this.container, this.cardSpriteSheet);
+            card.SetPosition(new Helpers_1.Vector2(-300, 50 - (i * 4)));
+            card.SetStartPosition(new Helpers_1.Vector2(-300, 50 - (i * 4)));
+            this.cards.push(card);
         }
     };
     CardsSystem.prototype.Update = function (deltaTime) {
-        this.currentTimeOnCard += deltaTime;
-        if (this.currentTimeOnCard >= this.timeToMoveCard) {
+        if (this.currentTimeOnCard > 0) {
+            this.currentTimeOnCard -= deltaTime;
+            return;
+        }
+        this.cardMoveTime += deltaTime;
+        if (this.cardMoveTime >= this.cardMoveDuration) {
             if (this.currentCardIndex > 0) {
-                this.currentTimeOnCard = 0;
                 this.currentCardIndex--;
-            }
-            else {
-                return;
+                this.currentTimeOnCard = this.timeToMoveCard;
+                this.cardMoveTime = 0;
             }
         }
-        var progress = this.currentTimeOnCard / this.timeToMoveCard;
-        var targetPosition = new Helpers_1.Vector2(300, -200);
-        var currentPosition = this.cards[this.currentCardIndex].GetPosition();
-        currentPosition = currentPosition.Lerp(currentPosition, targetPosition, progress);
-        // this.cards[this.currentCardIndex].SetPosition(currentPosition);
+        var progress = Helpers_1.Helpers.ClampNumber(this.cardMoveTime / this.cardMoveDuration, 0, 1);
+        var centre = new Helpers_1.Vector2(200, 200);
+        var startAngle = Math.PI * 2; // Start at 0 degrees (top)
+        var endAngle = 0; // End at 180 degrees (bottom)
+        var angleStep = (endAngle - startAngle) / (this.cards.length - 1);
+        var radius = 260;
+        var angle = startAngle + (this.currentCardIndex * angleStep);
+        var x = centre.X + radius * Math.cos(angle);
+        var y = centre.Y + radius * Math.sin(angle);
+        var targetPosition = new Helpers_1.Vector2(x, -y);
+        var newPosition = Helpers_1.Vector2.LerpDirect(this.cards[this.currentCardIndex].GetStartPosition(), targetPosition, progress);
+        var cardTargetAngle = Math.atan2(-y - centre.Y, x - centre.X);
+        var newAngle = Helpers_1.Vector2.LerpNumber(0, cardTargetAngle + Math.PI / 2, progress);
+        this.cards[this.currentCardIndex].SetPosition(newPosition);
+        this.cards[this.currentCardIndex].SetZIndex(this.cards.length - this.currentCardIndex);
+        this.cards[this.currentCardIndex].SetRotation(newAngle);
     };
     return CardsSystem;
 }());
@@ -59653,8 +59670,23 @@ var CardSpriteSheet = /** @class */ (function () {
     CardSpriteSheet.prototype.SetPosition = function (position) {
         this.container.position.set(position.X, position.Y);
     };
+    CardSpriteSheet.prototype.SetStartPosition = function (position) {
+        this.startPosition = position;
+    };
     CardSpriteSheet.prototype.GetPosition = function () {
         return new Helpers_1.Vector2(this.container.position.x, this.container.position.y);
+    };
+    CardSpriteSheet.prototype.GetStartPosition = function () {
+        return this.startPosition;
+    };
+    CardSpriteSheet.prototype.SetZIndex = function (zIndex) {
+        this.container.zIndex = zIndex;
+    };
+    CardSpriteSheet.prototype.SetRotation = function (rotation) {
+        this.container.rotation = rotation;
+    };
+    CardSpriteSheet.prototype.GetRotation = function () {
+        return this.container.rotation;
     };
     return CardSpriteSheet;
 }());
@@ -60468,7 +60500,18 @@ var Vector2 = /** @class */ (function () {
     };
     Vector2.prototype.Lerp = function (a, b, percent) {
         //a * (1 - c) + b * c;
-        return (a.Multiply(1 - percent).Add(b)).Multiply(percent);
+        var result = a;
+        result = result.Multiply(1 - percent);
+        result = result.Add(b);
+        result = result.Multiply(percent);
+        return result;
+        //return (a.Multiply(1-percent).Add(b)).Multiply(percent);
+    };
+    Vector2.LerpDirect = function (start, end, t) {
+        return new Vector2(start.X + (end.X - start.X) * t, start.Y + (end.Y - start.Y) * t);
+    };
+    Vector2.LerpNumber = function (start, end, t) {
+        return start + (end - start) * t;
     };
     return Vector2;
 }());

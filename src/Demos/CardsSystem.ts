@@ -12,7 +12,9 @@ export class CardsSystem {
     // demo specific
     private currentCardIndex: number = this.maxCards-1;
     private currentTimeOnCard: number = 0;
-    private timeToMoveCard: number = 2;
+    private timeToMoveCard: number = 1; // delay between card moves
+    private cardMoveTime: number = 0;
+    private cardMoveDuration: number = 2; // how long it takes to move a card
 
     public Container(): PIXI.Container {
         return this.container;
@@ -45,31 +47,53 @@ export class CardsSystem {
 
     private AddCardSpriteSheets(): void {
         for(let i: number = 0; i < this.maxCards; i++) {
-            this.cards.push(new CardSpriteSheet(this.container, this.cardSpriteSheet))
-            this.cards[i].SetPosition(new Vector2(-300, 50 - (i * 4)));
+            let card: CardSpriteSheet = new CardSpriteSheet(this.container, this.cardSpriteSheet);
+            card.SetPosition(new Vector2(-300, 50 - (i * 4)));
+            card.SetStartPosition(new Vector2(-300, 50 - (i * 4)));
+            this.cards.push(card);            
         }
     }
 
     public Update(deltaTime: number): void {
         
-        this.currentTimeOnCard += deltaTime;
-        if(this.currentTimeOnCard >= this.timeToMoveCard) {            
-            if(this.currentCardIndex > 0) {
-                this.currentTimeOnCard = 0;
-                this.currentCardIndex--;
-            } else {
-                return;
-            }
+        if(this.currentTimeOnCard > 0) {
+            this.currentTimeOnCard -= deltaTime;
+            return;
         }
 
-        const progress: number = this.currentTimeOnCard / this.timeToMoveCard;
+        this.cardMoveTime += deltaTime;        
 
-        let targetPosition: Vector2 = new Vector2(300, -200);
+        if(this.cardMoveTime >= this.cardMoveDuration) {   
+            if(this.currentCardIndex > 0) {                
+                this.currentCardIndex--;
+                this.currentTimeOnCard = this.timeToMoveCard;
+                this.cardMoveTime = 0;
+            }
+        }                
 
-        let currentPosition: Vector2 = this.cards[this.currentCardIndex].GetPosition();
-        currentPosition = currentPosition.Lerp(currentPosition, targetPosition, progress);
+        const progress: number = Helpers.ClampNumber(this.cardMoveTime / this.cardMoveDuration, 0, 1);
 
-        // this.cards[this.currentCardIndex].SetPosition(currentPosition);
+        const centre: Vector2 = new Vector2(200, 200);
+
+        const startAngle = Math.PI*2; // Start at 0 degrees (top)
+        const endAngle = 0; // End at 180 degrees (bottom)
+        const angleStep = (endAngle - startAngle) / (this.cards.length - 1);
+
+        const radius = 260;
+        const angle = startAngle + (this.currentCardIndex * angleStep);
+        const x = centre.X + radius * Math.cos(angle);
+        const y = centre.Y + radius * Math.sin(angle);
+
+        let targetPosition: Vector2 = new Vector2(x, -y);
+
+        let newPosition = Vector2.LerpDirect(this.cards[this.currentCardIndex].GetStartPosition(), targetPosition, progress);
+
+        const cardTargetAngle = Math.atan2(-y - centre.Y, x - centre.X);
+        let newAngle = Vector2.LerpNumber(0, cardTargetAngle + Math.PI/2, progress);
+        
+        this.cards[this.currentCardIndex].SetPosition(newPosition);
+        this.cards[this.currentCardIndex].SetZIndex(this.cards.length - this.currentCardIndex);
+        this.cards[this.currentCardIndex].SetRotation(newAngle);
     }
 
 }
@@ -78,6 +102,7 @@ export class CardSpriteSheet {
 
     private container: PIXI.Container;
     private animation: PIXI.AnimatedSprite;
+    private startPosition!: Vector2;
    
     constructor(container: PIXI.Container, spriteSheet: PIXI.Spritesheet) {
 
@@ -107,10 +132,30 @@ export class CardSpriteSheet {
     }
 
     public SetPosition(position: Vector2): void {
-        this.container.position.set(position.X, position.Y);
+        this.container.position.set(position.X, position.Y);       
+    }
+
+    public SetStartPosition(position: Vector2): void {
+        this.startPosition = position;       
     }
 
     public GetPosition(): Vector2 {
         return new Vector2(this.container.position.x, this.container.position.y);
+    }
+
+    public GetStartPosition(): Vector2 {
+        return this.startPosition;
+    }
+
+    public SetZIndex(zIndex: number): void {
+        this.container.zIndex = zIndex;
+    }
+
+    public SetRotation(rotation:number) : void {
+        this.container.rotation = rotation;
+    }
+
+    public GetRotation(): number {
+        return this.container.rotation;
     }
 }
